@@ -28,6 +28,8 @@ class TestStrategy(bt.Strategy):
         ''' Logging function fot this strategy'''
         dt = dt or self.datas[0].datetime.date(0)
         print('%s, %s' % (dt.isoformat(), txt))
+        with open('backtest_results.txt', 'a', encoding='utf-8') as f:
+            f.write(dt.isoformat() + txt + '\n')
 
     def __init__(self):
         # Keep a reference to the "close" line in the data[0] dataseries
@@ -142,7 +144,7 @@ class TestStrategy(bt.Strategy):
                 self.order = self.sell()
 
     def stop(self):
-        if ((self.broker.getvalue() - 100000) / 100000) >= 0.05:
+        if ((self.broker.getvalue() - 100000) / 100000) >= 0.09:
             self.log('(bb Period %2d) (rsi period %2d) (macd period %2d) (bb_buy %2f) (bb_sell %2f) (rsi_buy %2d) (rsi_sell %2d) (buy_count %2d) (sell_count %2d) Ending Value %.2f' %
                  (self.params.bb_period, self.params.rsi_period, self.params.macd_period, self.params.bb_buy, self.params.bb_sell, self.params.rsi_buy, self.params.rsi_sell, self.buy_count, self.sell_count, self.broker.getvalue()))
 

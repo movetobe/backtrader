@@ -4,7 +4,7 @@ import pandas as pd
 
 def to_bt_dataframe(df):
     columns_to_copy = ['日期', '开盘', '收盘', '最高', '最低', '成交量', '振幅']
-    new_column_names = ['Date', 'Open', 'High', 'Low', 'Close', 'Volume', 'OpenInterest']
+    new_column_names = ['Date', 'Open', 'Close', 'High', 'Low', 'Volume', 'OpenInterest']
     # 创建一个列名映射字典
     column_mapping = dict(zip(columns_to_copy, new_column_names))
 
