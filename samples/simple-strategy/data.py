@@ -17,7 +17,7 @@ def to_bt_dataframe(df):
 
 class HistoricalData(bt.feeds.PandasData):
     def __init__(self, stock_code, beg, end):
-        stock_result = ef.stock.get_quote_history(stock_code, beg, end)
+        stock_result = ef.stock.get_quote_history(stock_code, beg, end, fqt=0)
 
         stock_result = to_bt_dataframe(stock_result)
         print("typeof stock_result is", type(stock_result))

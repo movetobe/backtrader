@@ -14,13 +14,13 @@ class TestStrategy(bt.Strategy):
     params = (
         ('buy_maperiod', 10),
         ('sell_maperiod', 20),
-        ('bb_period', 10),
-        ('rsi_period', 10),
+        ('bb_period', 9),
+        ('rsi_period', 7),
         ('macd_period', 10),
         ('bb_buy', 0.2),
         ('bb_sell', 0.9),
         ('rsi_buy', 50),
-        ('rsi_sell', 70),
+        ('rsi_sell', 80),
         ('macd_buy', 0),
         ('macd_sell', 0)
     )
@@ -28,7 +28,7 @@ class TestStrategy(bt.Strategy):
         ''' Logging function fot this strategy'''
         dt = dt or self.datas[0].datetime.date(0)
         print('%s, %s' % (dt.isoformat(), txt))
-        with open('backtest_results.txt', 'a', encoding='utf-8') as f:
+        with open('./samples/simple-strategy/backtest_results.txt', 'a', encoding='utf-8') as f:
             f.write(dt.isoformat() + txt + '\n')
 
     def __init__(self):
@@ -79,19 +79,19 @@ class TestStrategy(bt.Strategy):
         # Attention: broker could reject order if not enough cash
         if order.status in [order.Completed]:
             if order.isbuy():
-                #self.log(
-                #    'BUY EXECUTED, Price: %.2f, Cost: %.2f, Comm %.2f' %
-                #    (order.executed.price,
-                #     order.executed.value,
-                #     order.executed.comm))
+                self.log(
+                    'BUY EXECUTED, Price: %.2f, Cost: %.2f, Comm %.2f' %
+                    (order.executed.price,
+                     order.executed.value,
+                     order.executed.comm))
                 self.buyprice = order.executed.price
                 self.buycomm = order.executed.comm
                 self.buy_count += 1
             else:  # Sell
-                #self.log('SELL EXECUTED, Price: %.2f, Cost: %.2f, Comm %.2f' %
-                #           (order.executed.price,
-                #           order.executed.value,
-                #          order.executed.comm))
+                self.log('SELL EXECUTED, Price: %.2f, Cost: %.2f, Comm %.2f' %
+                           (order.executed.price,
+                           order.executed.value,
+                          order.executed.comm))
                 self.sell_count += 1
 
             self.bar_executed = len(self)
@@ -106,8 +106,8 @@ class TestStrategy(bt.Strategy):
         if not trade.isclosed:
             return
 
-        #self.log('OPERATION PROFIT, GROSS %.2f, NET %.2f' %
-        #         (trade.pnl, trade.pnlcomm))
+        self.log('OPERATION PROFIT, GROSS %.2f, NET %.2f' %
+                 (trade.pnl, trade.pnlcomm))
 
     def next(self):
         # Simply log the closing price of the series from the reference
@@ -128,17 +128,17 @@ class TestStrategy(bt.Strategy):
             if bbp < self.params.bb_buy and rsi < self.params.rsi_buy and macd > self.params.macd_buy:
 
                 # BUY, BUY, BUY!!! (with all possible default parameters)
-                # self.log('BUY CREATE, %.2f' % self.dataclose[0])
+                self.log('BUY CREATE, %.2f' % self.dataclose[0])
 
                 # Keep track of the created order to avoid a 2nd order
                 self.order = self.buy()
 
         else:
             # BB% > 0.8 OR RSI > 70 OR 止损触发（回撤>10%）
-            if bbp > self.params.bb_sell or rsi > self.params.rsi_sell:# or self.dataclose[0] < self.position.price * 0.9:
+            if bbp > self.params.bb_sell and rsi > self.params.rsi_sell:# or self.dataclose[0] < self.position.price * 0.9:
 
           # SELL, SELL, SELL!!! (with all possible default parameters)
-                #self.log('SELL CREATE, %.2f' % self.dataclose[0])
+                self.log('SELL CREATE, %.2f' % self.dataclose[0])
 
                 # Keep track of the created order to avoid a 2nd order
                 self.order = self.sell()
@@ -166,21 +166,23 @@ if __name__ == '__main__':
     cerebro = bt.Cerebro()
 
     # Add a strategy
-    # cerebro.addstrategy(TestStrategy)
+    cerebro.addstrategy(TestStrategy)
     # Add a strategy
-    strats = cerebro.optstrategy(
-        TestStrategy,
-        bb_period=range(7, 15),
-        rsi_period=range(7, 15),
-        macd_period=range(7, 15),
-        bb_buy=np.arange(0.2, 0.4, 0.1),
-        bb_sell=np.arange(0.8, 1.0, 0.1),
-        rsi_buy = range(50, 60, 10),
-        rsi_sell=range(70, 100, 10)
-    )
+    #strats = cerebro.optstrategy(
+    #    TestStrategy,
+    #    bb_period=range(7, 15),
+    #    rsi_period=range(7, 15),
+    #    macd_period=range(7, 15),
+    #    bb_buy=np.arange(0.2, 0.4, 0.1),
+    #    bb_sell=np.arange(0.8, 1.0, 0.1),
+    #    rsi_buy = range(50, 60, 10),
+    #    rsi_sell=range(70, 100, 10)
+    #)
 
     # 添加数据
-    stock_result = HistoricalData(stock_code='601088', beg='20240101', end='20241231').get_data()
+    stock_result = HistoricalData(stock_code='601088', beg='20230101', end='20250801').get_data() #中国神华
+    #stock_result = HistoricalData(stock_code='159300', beg='20200101', end='20250801').get_data() #沪深300ETF
+
     print("stock_result: ", stock_result)
     data = bt.feeds.PandasData(dataname=stock_result)
     # Add the Data Feed to Cerebro
@@ -205,4 +207,4 @@ if __name__ == '__main__':
     # Print out the final result
     print('Final Portfolio Value: %.2f' % cerebro.broker.getvalue())
     # Plot the result
-    # cerebro.plot()
+    cerebro.plot()
