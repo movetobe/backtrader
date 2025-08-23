@@ -135,7 +135,8 @@ class TestStrategy(bt.Strategy):
 
         else:
             # BB% > 0.8 OR RSI > 70 OR 止损触发（回撤>10%）
-            if bbp > self.params.bb_sell and rsi > self.params.rsi_sell:# or self.dataclose[0] < self.position.price * 0.9:
+            # 如果超过10个bar，比如？天或者？周，且股票收益有大于5%，是否可以触发卖出？
+            if (bbp > self.params.bb_sell and rsi > self.params.rsi_sell): # or self.dataclose[0] < self.buyprice * 0.95 or self.dataclose[0] > self.buyprice * 1.1:
 
           # SELL, SELL, SELL!!! (with all possible default parameters)
                 self.log('SELL CREATE, %.2f' % self.dataclose[0])
@@ -147,19 +148,6 @@ class TestStrategy(bt.Strategy):
         if ((self.broker.getvalue() - 100000) / 100000) >= 0.09:
             self.log('(bb Period %2d) (rsi period %2d) (macd period %2d) (bb_buy %2f) (bb_sell %2f) (rsi_buy %2d) (rsi_sell %2d) (buy_count %2d) (sell_count %2d) Ending Value %.2f' %
                  (self.params.bb_period, self.params.rsi_period, self.params.macd_period, self.params.bb_buy, self.params.bb_sell, self.params.rsi_buy, self.params.rsi_sell, self.buy_count, self.sell_count, self.broker.getvalue()))
-
-def to_bt_dataframe(df):
-    columns_to_copy = ['日期', '开盘', '收盘', '最高', '最低', '成交量', '振幅']
-    new_column_names = ['Date', 'Open', 'High', 'Low', 'Close', 'Volume', 'OpenInterest']
-    # 创建一个列名映射字典
-    column_mapping = dict(zip(columns_to_copy, new_column_names))
-
-    # 拷贝并重命名列
-    new_df = df[columns_to_copy].rename(columns=column_mapping).copy()
-    new_df['Date'] = pd.to_datetime(new_df['Date'])
-    new_df.set_index('Date', inplace=True)
-
-    return new_df
 
 if __name__ == '__main__':
     # Create a cerebro entity
@@ -180,9 +168,34 @@ if __name__ == '__main__':
     #)
 
     # 添加数据
-    stock_result = HistoricalData(stock_code='601088', beg='20230101', end='20250801').get_data() #中国神华
+    #stock_result = HistoricalData(stock_code='601088', beg='20200101', end='20250801').get_data() #中国神华
     #stock_result = HistoricalData(stock_code='159300', beg='20200101', end='20250801').get_data() #沪深300ETF
-
+    #stock_result = HistoricalData(stock_code='小米集团-W', beg='20230101', end='20251231').get_data() # 小米集团
+    #stock_result = HistoricalData(stock_code='美团-W', beg='20240101', end='20251231').get_data() # 美团-W
+    #stock_result = HistoricalData(stock_code='万东医疗', beg='20200101', end='20251231').get_data() # 万东医疗
+    #stock_result = HistoricalData(stock_code='159748', beg='20230101', end='20251231').get_data()
+    #stock_result = HistoricalData(stock_code='中钨高新', beg='20240101', end='20251231').get_data()
+    #stock_result = HistoricalData(stock_code='中金黄金', beg='20230101', end='20251231').get_data()
+    #stock_result = HistoricalData(stock_code='厦门钨业', beg='20230101', end='20251231').get_data()
+    #stock_result = HistoricalData(stock_code='中国电建', beg='20230101', end='20251231').get_data()
+    #stock_result = HistoricalData(stock_code='中国能建', beg='20240101', end='20251231').get_data()
+    #stock_result = HistoricalData(stock_code='上海电力', beg='20240101', end='20251231').get_data()
+    #stock_result = HistoricalData(stock_code='159792', beg='20240101', end='20251231').get_data()  # 中国神华
+    #stock_result = HistoricalData(stock_code='中信证券', beg='20240101', end='20251231').get_data()  # 中国神华
+    #stock_result = HistoricalData(stock_code='浪潮信息', beg='20240101', end='20251231').get_data()  # 中国神华
+    #stock_result = HistoricalData(stock_code='中科曙光', beg='20240101', end='20251231').get_data()  # 中国神华
+    #stock_result = HistoricalData(stock_code='陕国投A', beg='20240101', end='20251231').get_data()  # 中国神华
+    #stock_result = HistoricalData(stock_code='浙江东方', beg='20200101', end='20251231').get_data()  # 中国神华
+    #stock_result = HistoricalData(stock_code='招金矿业', beg='20240101', end='20251231').get_data()  # 中国神华
+    #stock_result = HistoricalData(stock_code='恒生电子', beg='20240101', end='20251231').get_data()  # 中国神华
+    #stock_result = HistoricalData(stock_code='中国交建', beg='20200101', end='20251231').get_data()  # 中国神华
+    #stock_result = HistoricalData(stock_code='长江电力', beg='20240101', end='20251231').get_data()  # 中国神华
+    #stock_result = HistoricalData(stock_code='ST华通', beg='20240101', end='20251231').get_data()  # 中国神华
+    #stock_result = HistoricalData(stock_code='洛阳钼业', beg='20240101', end='20251231').get_data()  # 洛阳钼业
+    #stock_result = HistoricalData(stock_code='中国稀土', beg='20140101', end='20251231').get_data()  # 中国神华
+    #stock_result = HistoricalData(stock_code='中烟香港', beg='20240101', end='20251231').get_data()  # 中国神华
+    #stock_result = HistoricalData(stock_code='京沪高铁', beg='20140101', end='20251231').get_data()  # 中国神华
+    stock_result = HistoricalData(stock_code='中国人保', beg='20240101', end='20251231').get_data()  # 中国神华
     print("stock_result: ", stock_result)
     data = bt.feeds.PandasData(dataname=stock_result)
     # Add the Data Feed to Cerebro
