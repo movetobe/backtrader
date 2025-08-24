@@ -125,11 +125,12 @@ class KnownOneStrategy(bt.Strategy):
         final_value = self.broker.getvalue()
         
         if self.position.size == 0:
-            status = "已卖出（空仓）"
+            status = f"已卖出（空仓）, 总收益: {((final_value - starting) / starting):.2%}"
         else:
-            status = f"持仓中，持有价格: {self.buyprice}，当前价格：{self.dataclose[0]}，持有数量: {self.position.size}"
+            status = f"持仓中，持有价格: {self.buyprice:.2f}，当前价格：{self.dataclose[0]:.2f}，当前收益: {(self.dataclose[0] - self.buyprice) / self.buyprice:.2%}"
         self.log(f"股票状态: {status}")
 
         if ((final_value - starting) / starting) >= self.params.profit_target:
             self.log('(bb Period %2d) (rsi period %2d) (macd period %2d) (bb_buy %2f) (bb_sell %2f) (rsi_buy %2d) (rsi_sell %2d) (buy_count %2d) (sell_count %2d) Ending Value %.2f' %
                  (self.params.bb_period, self.params.rsi_period, self.params.macd_period, self.params.bb_buy, self.params.bb_sell, self.params.rsi_buy, self.params.rsi_sell, self.buy_count, self.sell_count, final_value))
+            

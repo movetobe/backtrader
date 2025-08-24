@@ -18,7 +18,7 @@ def get_stock_list():
     stock_list_path = os.path.join(current_dir, 'stock_list.txt')
 
     with open(stock_list_path, 'r', encoding='utf-8') as f:
-        stock_list = [line.strip() for line in f if line.strip()]
+        stock_list = [line.strip() for line in f if line.strip() and not line.strip().startswith('#')]
 
     return stock_list
 
@@ -85,7 +85,7 @@ if __name__ == '__main__':
     for stock in stock_list:
         print(f"Backtesting stock: {stock}")
         try:
-            final_value = backtest_stock(stock_code=stock, beg='20240101', end='20251231', init_cash=1000000)
+            final_value = backtest_stock(stock_code=stock, beg='20240101', end='20251231', init_cash=100000)
         except Exception as e:
             logger.write(f"Error backtesting stock {stock}: {e}")
             
