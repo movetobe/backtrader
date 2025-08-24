@@ -1,0 +1,243 @@
+ Starting Name: 159300 Portfolio Value: 1000000.00
+2025-04-11 BUY CREATE, 3.84
+2025-04-18 BUY EXECUTED, Price: 3.85, Cost: 951978.14, Comm 0.00
+2025-07-18 SELL CREATE, 4.23
+2025-07-25 SELL EXECUTED, Price: 4.23, Cost: 951978.14, Comm 0.00
+2025-07-25 OPERATION PROFIT, GROSS 94456.01, NET 94456.01
+2025-08-22 股票状态: 已卖出（空仓）
+2025-08-22 (bb Period  9) (rsi period  7) (macd period 10) (bb_buy 0.200000) (bb_sell 0.900000) (rsi_buy 50) (rsi_sell 80) (buy_count  1) (sell_count  1) Ending Value 1094456.01
+ Final Name: 159300 Portfolio Value: 1094456.01
+ ======================
+ Starting Name: 小米集团 Portfolio Value: 1000000.00
+2025-04-17 BUY CREATE, 41.95
+2025-04-25 BUY EXECUTED, Price: 42.45, Cost: 961323.00, Comm 0.00
+2025-08-22 股票状态: 持仓中，持有价格: 42.45，当前价格：52.55，持有数量: 22646.00715137068
+2025-08-22 (bb Period  9) (rsi period  7) (macd period 10) (bb_buy 0.200000) (bb_sell 0.900000) (rsi_buy 50) (rsi_sell 80) (buy_count  1) (sell_count  0) Ending Value 1228724.67
+ Final Name: 小米集团 Portfolio Value: 1228724.67
+ ======================
+ Starting Name: 美团-W Portfolio Value: 1000000.00
+2025-01-10 BUY CREATE, 140.10
+2025-01-17 BUY EXECUTED, Price: 139.00, Cost: 942541.04, Comm 0.00
+2025-08-22 股票状态: 持仓中，持有价格: 139.0，当前价格：118.4，持有数量: 6780.870806566738
+ Final Name: 美团-W Portfolio Value: 860314.06
+ ======================
+ Starting Name: 万东医疗 Portfolio Value: 1000000.00
+2025-01-03 BUY CREATE, 14.44
+2025-01-10 BUY EXECUTED, Price: 14.51, Cost: 954605.26, Comm 0.00
+2025-08-22 股票状态: 持仓中，持有价格: 14.51，当前价格：18.05，持有数量: 65789.47368421052
+2025-08-22 (bb Period  9) (rsi period  7) (macd period 10) (bb_buy 0.200000) (bb_sell 0.900000) (rsi_buy 50) (rsi_sell 80) (buy_count  1) (sell_count  0) Ending Value 1232894.74
+ Final Name: 万东医疗 Portfolio Value: 1232894.74
+ ======================
+ Starting Name: 159748 Portfolio Value: 1000000.00
+2025-01-03 BUY CREATE, 0.52
+2025-01-10 BUY EXECUTED, Price: 0.51, Cost: 940812.38, Comm 0.00
+2025-06-13 SELL CREATE, 0.72
+2025-06-20 SELL EXECUTED, Price: 0.72, Cost: 940812.38, Comm 0.00
+2025-06-20 OPERATION PROFIT, GROSS 376692.46, NET 376692.46
+2025-08-22 股票状态: 已卖出（空仓）
+2025-08-22 (bb Period  9) (rsi period  7) (macd period 10) (bb_buy 0.200000) (bb_sell 0.900000) (rsi_buy 50) (rsi_sell 80) (buy_count  1) (sell_count  1) Ending Value 1376692.46
+ Final Name: 159748 Portfolio Value: 1376692.46
+ ======================
+ Starting Name: 中钨高新 Portfolio Value: 1000000.00
+2024-12-27 BUY CREATE, 9.68
+2025-01-03 BUY EXECUTED, Price: 9.64, Cost: 946074.38, Comm 0.00
+2025-07-18 SELL CREATE, 13.61
+2025-07-25 SELL EXECUTED, Price: 13.77, Cost: 946074.38, Comm 0.00
+2025-07-25 OPERATION PROFIT, GROSS 405320.25, NET 405320.25
+2025-08-22 股票状态: 已卖出（空仓）
+2025-08-22 (bb Period  9) (rsi period  7) (macd period 10) (bb_buy 0.200000) (bb_sell 0.900000) (rsi_buy 50) (rsi_sell 80) (buy_count  1) (sell_count  1) Ending Value 1405320.25
+ Final Name: 中钨高新 Portfolio Value: 1405320.25
+ ======================
+ Starting Name: 中金黄金 Portfolio Value: 1000000.00
+2024-09-06 BUY CREATE, 12.58
+2024-09-13 BUY EXECUTED, Price: 12.32, Cost: 930365.66, Comm 0.00
+2025-08-22 股票状态: 持仓中，持有价格: 12.32，当前价格：14.5，持有数量: 75516.69316375199
+2025-08-22 (bb Period  9) (rsi period  7) (macd period 10) (bb_buy 0.200000) (bb_sell 0.900000) (rsi_buy 50) (rsi_sell 80) (buy_count  1) (sell_count  0) Ending Value 1164626.39
+ Final Name: 中金黄金 Portfolio Value: 1164626.39
+ ======================
+ Starting Name: 厦门钨业 Portfolio Value: 1000000.00
+2024-12-27 BUY CREATE, 19.77
+2025-01-03 BUY EXECUTED, Price: 19.75, Cost: 949038.95, Comm 0.00
+2025-07-25 SELL CREATE, 25.00
+2025-08-01 SELL EXECUTED, Price: 24.90, Cost: 949038.95, Comm 0.00
+2025-08-01 OPERATION PROFIT, GROSS 247470.92, NET 247470.92
+2025-08-22 股票状态: 已卖出（空仓）
+2025-08-22 (bb Period  9) (rsi period  7) (macd period 10) (bb_buy 0.200000) (bb_sell 0.900000) (rsi_buy 50) (rsi_sell 80) (buy_count  1) (sell_count  1) Ending Value 1247470.92
+ Final Name: 厦门钨业 Portfolio Value: 1247470.92
+ ======================
+ Starting Name: 中国电建 Portfolio Value: 1000000.00
+2024-09-06 BUY CREATE, 4.57
+2024-09-13 BUY EXECUTED, Price: 4.55, Cost: 945842.45, Comm 0.00
+2025-07-25 SELL CREATE, 7.22
+2025-08-01 SELL EXECUTED, Price: 7.08, Cost: 945842.45, Comm 0.00
+2025-08-01 OPERATION PROFIT, GROSS 525929.98, NET 525929.98
+2025-08-22 股票状态: 已卖出（空仓）
+2025-08-22 (bb Period  9) (rsi period  7) (macd period 10) (bb_buy 0.200000) (bb_sell 0.900000) (rsi_buy 50) (rsi_sell 80) (buy_count  1) (sell_count  1) Ending Value 1525929.98
+ Final Name: 中国电建 Portfolio Value: 1525929.98
+ ======================
+ Starting Name: 中国能建 Portfolio Value: 1000000.00
+2025-01-03 BUY CREATE, 2.19
+2025-01-10 BUY EXECUTED, Price: 2.19, Cost: 950000.00, Comm 0.00
+2025-07-25 SELL CREATE, 2.72
+2025-08-01 SELL EXECUTED, Price: 2.68, Cost: 950000.00, Comm 0.00
+2025-08-01 OPERATION PROFIT, GROSS 212557.08, NET 212557.08
+2025-08-22 股票状态: 已卖出（空仓）
+2025-08-22 (bb Period  9) (rsi period  7) (macd period 10) (bb_buy 0.200000) (bb_sell 0.900000) (rsi_buy 50) (rsi_sell 80) (buy_count  1) (sell_count  1) Ending Value 1212557.08
+ Final Name: 中国能建 Portfolio Value: 1212557.08
+ ======================
+ Starting Name: 上海电力 Portfolio Value: 1000000.00
+2025-01-03 BUY CREATE, 8.81
+2025-01-10 BUY EXECUTED, Price: 8.81, Cost: 950000.00, Comm 0.00
+2025-08-08 SELL CREATE, 10.79
+2025-08-15 SELL EXECUTED, Price: 10.73, Cost: 950000.00, Comm 0.00
+2025-08-15 OPERATION PROFIT, GROSS 207037.46, NET 207037.46
+2025-08-22 股票状态: 已卖出（空仓）
+2025-08-22 (bb Period  9) (rsi period  7) (macd period 10) (bb_buy 0.200000) (bb_sell 0.900000) (rsi_buy 50) (rsi_sell 80) (buy_count  1) (sell_count  1) Ending Value 1207037.46
+ Final Name: 上海电力 Portfolio Value: 1207037.46
+ ======================
+ Starting Name: 159792 Portfolio Value: 1000000.00
+2025-01-10 BUY CREATE, 0.66
+2025-01-17 BUY EXECUTED, Price: 0.65, Cost: 939862.80, Comm 0.00
+2025-02-14 SELL CREATE, 0.88
+2025-02-21 SELL EXECUTED, Price: 0.91, Cost: 939862.80, Comm 0.00
+2025-02-21 OPERATION PROFIT, GROSS 370731.71, NET 370731.71
+2025-04-11 BUY CREATE, 0.79
+2025-04-18 BUY EXECUTED, Price: 0.81, Cost: 1328435.83, Comm 0.00
+2025-08-22 股票状态: 持仓中，持有价格: 0.81，当前价格：0.963，持有数量: 1640044.2341954904
+2025-08-22 (bb Period  9) (rsi period  7) (macd period 10) (bb_buy 0.200000) (bb_sell 0.900000) (rsi_buy 50) (rsi_sell 80) (buy_count  2) (sell_count  1) Ending Value 1621658.48
+ Final Name: 159792 Portfolio Value: 1621658.48
+ ======================
+ Starting Name: 中信证券 Portfolio Value: 1000000.00
+2025-01-03 BUY CREATE, 26.97
+2025-01-10 BUY EXECUTED, Price: 26.80, Cost: 944011.87, Comm 0.00
+2025-08-22 SELL CREATE, 32.20
+2025-08-22 股票状态: 持仓中，持有价格: 26.8，当前价格：32.2，持有数量: 35224.32332220986
+2025-08-22 (bb Period  9) (rsi period  7) (macd period 10) (bb_buy 0.200000) (bb_sell 0.900000) (rsi_buy 50) (rsi_sell 80) (buy_count  1) (sell_count  0) Ending Value 1190211.35
+ Final Name: 中信证券 Portfolio Value: 1190211.35
+ ======================
+ Starting Name: 浪潮信息 Portfolio Value: 1000000.00
+2025-04-11 BUY CREATE, 47.78
+2025-04-18 BUY EXECUTED, Price: 48.93, Cost: 972865.22, Comm 0.00
+2025-08-22 SELL CREATE, 68.20
+2025-08-22 股票状态: 持仓中，持有价格: 48.93，当前价格：68.2，持有数量: 19882.79614901632
+2025-08-22 (bb Period  9) (rsi period  7) (macd period 10) (bb_buy 0.200000) (bb_sell 0.900000) (rsi_buy 50) (rsi_sell 80) (buy_count  1) (sell_count  0) Ending Value 1383141.48
+ Final Name: 浪潮信息 Portfolio Value: 1383141.48
+ ======================
+ Starting Name: 中科曙光 Portfolio Value: 1000000.00
+2025-01-03 BUY CREATE, 64.82
+2025-01-10 BUY EXECUTED, Price: 64.17, Cost: 940473.62, Comm 0.00
+2025-08-22 SELL CREATE, 82.83
+2025-08-22 股票状态: 持仓中，持有价格: 64.17，当前价格：82.83，持有数量: 14655.970379512497
+2025-08-22 (bb Period  9) (rsi period  7) (macd period 10) (bb_buy 0.200000) (bb_sell 0.900000) (rsi_buy 50) (rsi_sell 80) (buy_count  1) (sell_count  0) Ending Value 1273480.41
+ Final Name: 中科曙光 Portfolio Value: 1273480.41
+ ======================
+ Starting Name: 陕国投A Portfolio Value: 1000000.00
+2025-01-03 BUY CREATE, 3.38
+2025-01-10 BUY EXECUTED, Price: 3.36, Cost: 944378.70, Comm 0.00
+2025-08-22 股票状态: 持仓中，持有价格: 3.36，当前价格：3.8，持有数量: 281065.08875739644
+2025-08-22 (bb Period  9) (rsi period  7) (macd period 10) (bb_buy 0.200000) (bb_sell 0.900000) (rsi_buy 50) (rsi_sell 80) (buy_count  1) (sell_count  0) Ending Value 1123668.64
+ Final Name: 陕国投A Portfolio Value: 1123668.64
+ ======================
+ Starting Name: 浙江东方 Portfolio Value: 1000000.00
+2025-01-03 BUY CREATE, 4.39
+2025-01-10 BUY EXECUTED, Price: 4.36, Cost: 943507.97, Comm 0.00
+2025-02-07 SELL CREATE, 6.78
+2025-02-14 SELL EXECUTED, Price: 6.78, Cost: 943507.97, Comm 0.00
+2025-02-14 OPERATION PROFIT, GROSS 523690.21, NET 523690.21
+2025-04-11 BUY CREATE, 5.79
+2025-04-18 BUY EXECUTED, Price: 5.88, Cost: 1470005.78, Comm 0.00
+2025-08-22 股票状态: 持仓中，持有价格: 5.88，当前价格：6.63，持有数量: 250000.98355109157
+2025-08-22 (bb Period  9) (rsi period  7) (macd period 10) (bb_buy 0.200000) (bb_sell 0.900000) (rsi_buy 50) (rsi_sell 80) (buy_count  2) (sell_count  1) Ending Value 1711190.94
+ Final Name: 浙江东方 Portfolio Value: 1711190.94
+ ======================
+ Starting Name: 招金矿业 Portfolio Value: 1000000.00
+2024-09-05 BUY CREATE, 11.94
+2024-09-13 BUY EXECUTED, Price: 11.82, Cost: 940452.26, Comm 0.00
+2025-04-17 SELL CREATE, 18.92
+2025-04-25 SELL EXECUTED, Price: 20.30, Cost: 940452.26, Comm 0.00
+2025-04-25 OPERATION PROFIT, GROSS 674706.87, NET 674706.87
+2025-08-01 BUY CREATE, 19.48
+2025-08-08 BUY EXECUTED, Price: 20.10, Cost: 1641608.19, Comm 0.00
+2025-08-22 股票状态: 持仓中，持有价格: 20.1，当前价格：21.4，持有数量: 81672.04950144287
+2025-08-22 (bb Period  9) (rsi period  7) (macd period 10) (bb_buy 0.200000) (bb_sell 0.900000) (rsi_buy 50) (rsi_sell 80) (buy_count  2) (sell_count  1) Ending Value 1780880.53
+ Final Name: 招金矿业 Portfolio Value: 1780880.53
+ ======================
+ Starting Name: 恒生电子 Portfolio Value: 1000000.00
+2025-01-03 BUY CREATE, 25.36
+2025-01-10 BUY EXECUTED, Price: 25.33, Cost: 948876.18, Comm 0.00
+2025-06-27 SELL CREATE, 33.72
+2025-07-04 SELL EXECUTED, Price: 33.85, Cost: 948876.18, Comm 0.00
+2025-07-04 OPERATION PROFIT, GROSS 319164.04, NET 319164.04
+2025-08-22 股票状态: 已卖出（空仓）
+2025-08-22 (bb Period  9) (rsi period  7) (macd period 10) (bb_buy 0.200000) (bb_sell 0.900000) (rsi_buy 50) (rsi_sell 80) (buy_count  1) (sell_count  1) Ending Value 1319164.04
+ Final Name: 恒生电子 Portfolio Value: 1319164.04
+ ======================
+ Starting Name: 中国交建 Portfolio Value: 1000000.00
+2025-01-03 BUY CREATE, 9.82
+2025-01-10 BUY EXECUTED, Price: 9.82, Cost: 950000.00, Comm 0.00
+2025-08-22 股票状态: 持仓中，持有价格: 9.82，当前价格：9.59，持有数量: 96741.34419551934
+ Final Name: 中国交建 Portfolio Value: 977749.49
+ ======================
+ Starting Name: 长江电力 Portfolio Value: 1000000.00
+2024-09-13 BUY CREATE, 28.30
+2024-09-20 BUY EXECUTED, Price: 28.25, Cost: 948321.55, Comm 0.00
+2025-05-23 SELL CREATE, 30.49
+2025-05-30 SELL EXECUTED, Price: 30.40, Cost: 948321.55, Comm 0.00
+2025-05-30 OPERATION PROFIT, GROSS 72173.14, NET 72173.14
+2025-07-18 BUY CREATE, 29.50
+2025-07-25 BUY EXECUTED, Price: 29.70, Cost: 1025470.01, Comm 0.00
+2025-08-22 股票状态: 持仓中，持有价格: 29.7，当前价格：27.87，持有数量: 34527.60975025453
+ Final Name: 长江电力 Portfolio Value: 1008987.62
+ ======================
+ Starting Name: ST华通 Portfolio Value: 1000000.00
+2025-08-22 股票状态: 已卖出（空仓）
+ Final Name: ST华通 Portfolio Value: 1000000.00
+ ======================
+ Starting Name: 洛阳钼业 Portfolio Value: 1000000.00
+2024-11-22 BUY CREATE, 7.32
+2024-11-29 BUY EXECUTED, Price: 7.35, Cost: 953893.44, Comm 0.00
+2025-08-15 SELL CREATE, 11.11
+2025-08-22 SELL EXECUTED, Price: 11.30, Cost: 953893.44, Comm 0.00
+2025-08-22 OPERATION PROFIT, GROSS 512636.61, NET 512636.61
+2025-08-22 股票状态: 已卖出（空仓）
+2025-08-22 (bb Period  9) (rsi period  7) (macd period 10) (bb_buy 0.200000) (bb_sell 0.900000) (rsi_buy 50) (rsi_sell 80) (buy_count  1) (sell_count  1) Ending Value 1512636.61
+ Final Name: 洛阳钼业 Portfolio Value: 1512636.61
+ ======================
+ Starting Name: 中国稀土 Portfolio Value: 1000000.00
+2025-01-03 BUY CREATE, 27.03
+2025-01-10 BUY EXECUTED, Price: 27.00, Cost: 948945.62, Comm 0.00
+2025-07-25 SELL CREATE, 45.59
+2025-08-01 SELL EXECUTED, Price: 45.01, Cost: 948945.62, Comm 0.00
+2025-08-01 OPERATION PROFIT, GROSS 632981.87, NET 632981.87
+2025-08-22 股票状态: 已卖出（空仓）
+2025-08-22 (bb Period  9) (rsi period  7) (macd period 10) (bb_buy 0.200000) (bb_sell 0.900000) (rsi_buy 50) (rsi_sell 80) (buy_count  1) (sell_count  1) Ending Value 1632981.87
+ Final Name: 中国稀土 Portfolio Value: 1632981.87
+ ======================
+ Starting Name: 中烟香港 Portfolio Value: 1000000.00
+2025-01-10 BUY CREATE, 22.35
+2025-01-17 BUY EXECUTED, Price: 22.35, Cost: 950000.00, Comm 0.00
+2025-05-16 SELL CREATE, 34.75
+2025-05-23 SELL EXECUTED, Price: 34.70, Cost: 950000.00, Comm 0.00
+2025-05-23 OPERATION PROFIT, GROSS 524944.07, NET 524944.07
+2025-08-22 股票状态: 已卖出（空仓）
+2025-08-22 (bb Period  9) (rsi period  7) (macd period 10) (bb_buy 0.200000) (bb_sell 0.900000) (rsi_buy 50) (rsi_sell 80) (buy_count  1) (sell_count  1) Ending Value 1524944.07
+ Final Name: 中烟香港 Portfolio Value: 1524944.07
+ ======================
+ Starting Name: 京沪高铁 Portfolio Value: 1000000.00
+2024-09-13 BUY CREATE, 5.27
+2024-09-20 BUY EXECUTED, Price: 5.27, Cost: 950000.00, Comm 0.00
+2025-08-22 股票状态: 持仓中，持有价格: 5.27，当前价格：5.35，持有数量: 180265.65464895635
+ Final Name: 京沪高铁 Portfolio Value: 1014421.25
+ ======================
+ Starting Name: 中国人保 Portfolio Value: 1000000.00
+2025-01-10 BUY CREATE, 6.72
+2025-01-17 BUY EXECUTED, Price: 6.66, Cost: 941517.86, Comm 0.00
+2025-06-13 SELL CREATE, 8.50
+2025-06-20 SELL EXECUTED, Price: 8.50, Cost: 941517.86, Comm 0.00
+2025-06-20 OPERATION PROFIT, GROSS 260119.05, NET 260119.05
+2025-08-01 BUY CREATE, 8.16
+2025-08-08 BUY EXECUTED, Price: 8.14, Cost: 1194178.99, Comm 0.00
+2025-08-22 股票状态: 持仓中，持有价格: 8.14，当前价格：8.81，持有数量: 146705.0361811391
+2025-08-22 (bb Period  9) (rsi period  7) (macd period 10) (bb_buy 0.200000) (bb_sell 0.900000) (rsi_buy 50) (rsi_sell 80) (buy_count  2) (sell_count  1) Ending Value 1358411.42
+ Final Name: 中国人保 Portfolio Value: 1358411.42
+ ======================
