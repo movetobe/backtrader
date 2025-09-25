@@ -30,7 +30,7 @@ def backtest_stock(stock_code, beg, end, init_cash):
     cerebro.addstrategy(KnownOneStrategy)
     # Add a strategy
     #strats = cerebro.optstrategy(
-    #    TestStrategy,
+    #    KnownOneStrategy,
     #    bb_period=range(7, 15),
     #    rsi_period=range(7, 15),
     #    macd_period=range(7, 15),
@@ -50,8 +50,8 @@ def backtest_stock(stock_code, beg, end, init_cash):
     cerebro.broker.setcash(init_cash)
 
     # Add a FixedSize sizer according to the stake
-    #cerebro.addsizer(bt.sizers.FixedSize, stake=1000)
-    cerebro.addsizer(bt.sizers.PercentSizer, percents=95)
+    # cerebro.addsizer(bt.sizers.FixedSize, stake=1000)  # 按固定股份
+    cerebro.addsizer(bt.sizers.PercentSizer, percents=95)  # 按资金比例
 
     # Set the commission
     cerebro.broker.setcommission(commission=0)

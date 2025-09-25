@@ -96,13 +96,33 @@ class BrokerBase(with_metaclass(MetaBroker, object)):
         If name is ``None``, this will be the default for assets for which no
         other ``CommissionInfo`` scheme can be found
         '''
+        '''设置交易佣金信息
+                为经纪商管理的资产创建并设置佣金信息对象(CommissionInfo)。当name为None时，
+                将作为默认佣金方案应用于没有特定佣金方案的资产。
+
+                参数:
+                    commission (float): 基础佣金率，默认为0.0
+                    margin (float): 保证金要求，None表示不使用
+                    mult (float): 合约乘数，默认为1.0
+                    commtype (None/str): 佣金类型
+                    percabs (bool): 是否将百分比佣金视为绝对值，默认为True
+                    stocklike (bool): 是否为股票类资产，默认为False
+                    interest (float): 隔夜利息，默认为0.0
+                    interest_long (bool): 是否对多头收取隔夜利息，默认为False
+                    leverage (float): 杠杆倍数，默认为1.0
+                    automargin (bool): 是否自动计算保证金，默认为False
+                    name (str): 资产名称，None表示默认佣金方案
+
+                返回:
+                    None
+        '''
 
         comm = CommInfoBase(commission=commission, margin=margin, mult=mult,
                             commtype=commtype, stocklike=stocklike,
                             percabs=percabs,
                             interest=interest, interest_long=interest_long,
                             leverage=leverage, automargin=automargin)
-        self.comminfo[name] = comm
+        self.comminfo[name] = comm # 将佣金信息对象添加到comminfo字典中
 
     def addcommissioninfo(self, comminfo, name=None):
         '''Adds a ``CommissionInfo`` object that will be the default for all assets if

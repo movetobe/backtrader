@@ -12,20 +12,20 @@ import os
 from KnownLog import *
 
 # Create a Strategy
-class KnownOneStrategy(bt.Strategy):
+class KnownOneStrategy(bt.Strategy):  # 继承bt.Strategy
     params = (
-        ('buy_maperiod', 10),
-        ('sell_maperiod', 20),
-        ('bb_period', 9),
-        ('rsi_period', 7),
-        ('macd_period', 10),
-        ('bb_buy', 0.2),
+        ('buy_maperiod', 10),  # 买入移动平均线周期。当价格穿过10日均线时买入
+        ('sell_maperiod', 20),  # 卖出移动平均线周期，当价格穿过20日均线时卖出
+        ('bb_period', 9),  # 布林带反映市场的波动，波动越大，布林带越宽
+        ('rsi_period', 7),  # 相对强弱指数，评价价格上涨和下降幅度，RSI超过70，认为是超买区，RSI低于30，认为是超卖区
+        ('macd_period', 10),  # 平滑异同移动平均线，短期趋势和长期趋势线之间的差距，>0 代表短期动能大于长期动能，处于多头市场。
+        ('bb_buy', 0.2),  # 当前价格在布林带通道所处的相对位置（离下轨的位置），当0<bb<0.2时，说明超卖，考虑买入。
         ('bb_sell', 0.9),
-        ('rsi_buy', 50),
-        ('rsi_sell', 80),
+        ('rsi_buy', 50),  # RSI买入阈值
+        ('rsi_sell', 80),  # RSI卖出阈值
         ('macd_buy', 0),
         ('macd_sell', 0),
-        ('profit_target', 0.08)
+        ('profit_target', 0.08)  # 目标收益率
     )
     def log(self, txt, dt=None):
         ''' Logging function for this strategy'''
@@ -69,7 +69,7 @@ class KnownOneStrategy(bt.Strategy):
                      order.executed.value,
                      order.executed.comm))
                 self.buyprice = order.executed.price
-                self.buycomm = order.executed.comm
+                self.buycomm = order.executed.comm  # 佣金费
                 self.buy_count += 1
             else:  # Sell
                 self.log('SELL EXECUTED, Price: %.2f, Cost: %.2f, Comm %.2f' %
@@ -78,7 +78,7 @@ class KnownOneStrategy(bt.Strategy):
                           order.executed.comm))
                 self.sell_count += 1
 
-            self.bar_executed = len(self)
+            self.bar_executed = len(self)  # 当前已经处理的K线的数量
 
         #elif order.status in [order.Canceled, order.Margin, order.Rejected]:
         #    self.log('Order Canceled/Margin/Rejected')
@@ -91,7 +91,7 @@ class KnownOneStrategy(bt.Strategy):
             return
 
         self.log('OPERATION PROFIT, GROSS %.2f, NET %.2f' %
-                 (trade.pnl, trade.pnlcomm))
+                 (trade.pnl, trade.pnlcomm))  # 利润，总收益
 
     def next(self):
         # Check if an order is pending ... if yes, we cannot send a 2nd one
