@@ -1,0 +1,85 @@
+ Starting Name: 中信证券 Portfolio Value: 100000.00
+2025-01-03 BUY CREATE, 26.97
+2025-01-10 BUY EXECUTED, Price: 26.80, Cost: 94401.19, Comm 0.00
+2025-08-22 SELL CREATE, 32.20
+2025-08-22 股票状态: 持仓中，持有价格: 26.80，当前价格：32.20，当前收益: 20.15%
+2025-08-22 (bb Period  9) (rsi period  7) (macd period 10) (bb_buy 0.200000) (bb_sell 0.900000) (rsi_buy 50) (rsi_sell 80) (buy_count  1) (sell_count  0) Ending Value 119021.13
+ Final Name: 中信证券 Portfolio Value: 119021.13
+ ======================
+ Starting Name: 浙商证券 Portfolio Value: 100000.00
+2024-11-22 BUY CREATE, 12.04
+2024-11-29 BUY EXECUTED, Price: 12.07, Cost: 95236.71, Comm 0.00
+2025-08-22 股票状态: 持仓中，持有价格: 12.07，当前价格：12.39，当前收益: 2.65%
+ Final Name: 浙商证券 Portfolio Value: 102524.92
+ ======================
+ Starting Name: 159841 Portfolio Value: 100000.00
+2025-01-03 BUY CREATE, 0.97
+2025-01-10 BUY EXECUTED, Price: 0.97, Cost: 94317.95, Comm 0.00
+2025-08-22 SELL CREATE, 1.21
+2025-08-22 股票状态: 持仓中，持有价格: 0.97，当前价格：1.21，当前收益: 25.31%
+2025-08-22 (bb Period  9) (rsi period  7) (macd period 10) (bb_buy 0.200000) (bb_sell 0.900000) (rsi_buy 50) (rsi_sell 80) (buy_count  1) (sell_count  0) Ending Value 123871.79
+ Final Name: 159841 Portfolio Value: 123871.79
+ ======================
+ Starting Name: 招商证券 Portfolio Value: 100000.00
+2025-01-03 BUY CREATE, 17.88
+2025-01-10 BUY EXECUTED, Price: 17.60, Cost: 93512.30, Comm 0.00
+2025-08-22 股票状态: 持仓中，持有价格: 17.60，当前价格：19.32，当前收益: 9.77%
+2025-08-22 (bb Period  9) (rsi period  7) (macd period 10) (bb_buy 0.200000) (bb_sell 0.900000) (rsi_buy 50) (rsi_sell 80) (buy_count  1) (sell_count  0) Ending Value 109138.70
+ Final Name: 招商证券 Portfolio Value: 109138.70
+ ======================
+ Starting Name: 申万宏源 Portfolio Value: 100000.00
+2025-01-03 BUY CREATE, 4.97
+2025-01-10 BUY EXECUTED, Price: 4.96, Cost: 94808.85, Comm 0.00
+2025-08-22 股票状态: 持仓中，持有价格: 4.96，当前价格：5.69，当前收益: 14.72%
+2025-08-22 (bb Period  9) (rsi period  7) (macd period 10) (bb_buy 0.200000) (bb_sell 0.900000) (rsi_buy 50) (rsi_sell 80) (buy_count  1) (sell_count  0) Ending Value 113953.72
+ Final Name: 申万宏源 Portfolio Value: 113953.72
+ ======================
+ Starting Name: 东方证券 Portfolio Value: 100000.00
+2025-01-03 BUY CREATE, 9.75
+2025-01-10 BUY EXECUTED, Price: 9.70, Cost: 94512.82, Comm 0.00
+2025-07-25 SELL CREATE, 11.63
+2025-08-01 SELL EXECUTED, Price: 11.60, Cost: 94512.82, Comm 0.00
+2025-08-01 OPERATION PROFIT, GROSS 18512.82, NET 18512.82
+2025-08-22 股票状态: 已卖出（空仓）, 总收益: 18.51%
+2025-08-22 (bb Period  9) (rsi period  7) (macd period 10) (bb_buy 0.200000) (bb_sell 0.900000) (rsi_buy 50) (rsi_sell 80) (buy_count  1) (sell_count  1) Ending Value 118512.82
+ Final Name: 东方证券 Portfolio Value: 118512.82
+ ======================
+ Starting Name: 华林证券 Portfolio Value: 100000.00
+2025-04-03 BUY CREATE, 14.31
+2025-04-11 BUY EXECUTED, Price: 13.50, Cost: 89622.64, Comm 0.00
+2025-08-22 SELL CREATE, 17.22
+2025-08-22 股票状态: 持仓中，持有价格: 13.50，当前价格：17.22，当前收益: 27.56%
+2025-08-22 (bb Period  9) (rsi period  7) (macd period 10) (bb_buy 0.200000) (bb_sell 0.900000) (rsi_buy 50) (rsi_sell 80) (buy_count  1) (sell_count  0) Ending Value 124696.02
+ Final Name: 华林证券 Portfolio Value: 124696.02
+ ======================
+ Starting Name: 红塔证券 Portfolio Value: 100000.00
+2025-01-03 BUY CREATE, 7.69
+2025-01-10 BUY EXECUTED, Price: 7.76, Cost: 95864.76, Comm 0.00
+2025-08-22 股票状态: 持仓中，持有价格: 7.76，当前价格：9.73，当前收益: 25.39%
+2025-08-22 (bb Period  9) (rsi period  7) (macd period 10) (bb_buy 0.200000) (bb_sell 0.900000) (rsi_buy 50) (rsi_sell 80) (buy_count  1) (sell_count  0) Ending Value 124336.80
+ Final Name: 红塔证券 Portfolio Value: 124336.80
+ ======================
+ Starting Name: 财通证券 Portfolio Value: 100000.00
+2025-01-03 BUY CREATE, 7.63
+2025-01-10 BUY EXECUTED, Price: 7.61, Cost: 94750.98, Comm 0.00
+2025-08-22 股票状态: 持仓中，持有价格: 7.61，当前价格：8.81，当前收益: 15.77%
+2025-08-22 (bb Period  9) (rsi period  7) (macd period 10) (bb_buy 0.200000) (bb_sell 0.900000) (rsi_buy 50) (rsi_sell 80) (buy_count  1) (sell_count  0) Ending Value 114941.02
+ Final Name: 财通证券 Portfolio Value: 114941.02
+ ======================
+ Starting Name: 湘财股份 Portfolio Value: 100000.00
+2025-01-03 BUY CREATE, 6.71
+2025-01-10 BUY EXECUTED, Price: 6.70, Cost: 94858.42, Comm 0.00
+2025-07-11 SELL CREATE, 11.43
+2025-07-18 SELL EXECUTED, Price: 11.61, Cost: 94858.42, Comm 0.00
+2025-07-18 OPERATION PROFIT, GROSS 69515.65, NET 69515.65
+2025-08-22 股票状态: 已卖出（空仓）, 总收益: 69.52%
+2025-08-22 (bb Period  9) (rsi period  7) (macd period 10) (bb_buy 0.200000) (bb_sell 0.900000) (rsi_buy 50) (rsi_sell 80) (buy_count  1) (sell_count  1) Ending Value 169515.65
+ Final Name: 湘财股份 Portfolio Value: 169515.65
+ ======================
+ Starting Name: 第一创业 Portfolio Value: 100000.00
+2025-01-03 BUY CREATE, 7.40
+2025-01-10 BUY EXECUTED, Price: 7.36, Cost: 94486.49, Comm 0.00
+2025-08-22 股票状态: 持仓中，持有价格: 7.36，当前价格：8.00，当前收益: 8.70%
+2025-08-22 (bb Period  9) (rsi period  7) (macd period 10) (bb_buy 0.200000) (bb_sell 0.900000) (rsi_buy 50) (rsi_sell 80) (buy_count  1) (sell_count  0) Ending Value 108216.22
+ Final Name: 第一创业 Portfolio Value: 108216.22
+ ======================
