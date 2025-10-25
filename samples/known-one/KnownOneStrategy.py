@@ -103,6 +103,14 @@ class KnownOneStrategy(bt.Strategy):
         rsi = self.rsi[0]
         macd = self.macd[0]
 
+
+        if bbp < self.params.bb_buy and rsi < self.params.rsi_buy and macd > self.params.macd_buy:
+            # BUY, BUY, BUY!!! (with all possible default parameters)
+            self.log('BUY SIGNAL, %.2f' % self.dataclose[0])
+        if (bbp > self.params.bb_sell and rsi > self.params.rsi_sell): # or self.dataclose[0] < self.buyprice * 0.95 or self.dataclose[0] > self.buyprice * 1.1:
+            # SELL, SELL, SELL!!! (with all possible default parameters)
+            self.log('SELL SIGNAL, %.2f' % self.dataclose[0])
+
         # Check if we are in the market
         if not self.position:
             # BB% < 0.2 AND RSI < 45 AND MACD_DIF > 0
