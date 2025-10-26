@@ -10,6 +10,7 @@ import backtrader as bt
 from data import *
 import os
 from KnownLog import *
+import math
 
 # Create a Strategy
 class KnownOneStrategy(bt.Strategy):
@@ -41,6 +42,7 @@ class KnownOneStrategy(bt.Strategy):
         self.order = None
         self.buyprice = None
         self.buycomm = None
+        self.cost = 0
 
         self.bb = None
         self.rsi = None
@@ -71,13 +73,26 @@ class KnownOneStrategy(bt.Strategy):
                 self.buyprice = order.executed.price
                 self.buycomm = order.executed.comm
                 self.buy_count += 1
+                # 更新持仓成本：使用 broker/position 的平均持仓价计算当前成本基数
+                try:
+                    self.cost = abs(self.position.size) * float(self.position.price)
+                except Exception:
+                    # 兜底：若 position.price 不可用，使用累计成交价
+                    self.cost = self.cost + order.executed.price * order.executed.size
+                self.log("cost: %d" % self.cost)
             else:  # Sell
                 self.log('SELL EXECUTED, Price: %.2f, Cost: %.2f, Comm %.2f' %
                            (order.executed.price,
                            order.executed.value,
                           order.executed.comm))
                 self.sell_count += 1
-
+                # 卖出后更新持仓成本：基于 position 中记录的平均价与持仓数量重新计算
+                try:
+                    self.cost = abs(self.position.size) * float(self.position.price)
+                except Exception:
+                    # 兜底：若 position.price 不可用，按卖出价减少（旧逻辑）
+                    self.cost = self.cost - order.executed.price * order.executed.size
+                self.log("cost: %d" % self.cost)
             self.bar_executed = len(self)
 
         #elif order.status in [order.Canceled, order.Margin, order.Rejected]:
@@ -85,6 +100,7 @@ class KnownOneStrategy(bt.Strategy):
 
         # Write down: no pending order
         self.order = None
+        self.log("当前持仓： %d 股" % self.position.size)
 
     def notify_trade(self, trade):
         if not trade.isclosed:
@@ -112,21 +128,43 @@ class KnownOneStrategy(bt.Strategy):
             self.log('SELL SIGNAL, %.2f' % self.dataclose[0])
 
         # Check if we are in the market
-        if not self.position:
+        #if not self.position:
+        if self.broker.getcash() > 0:
             # BB% < 0.2 AND RSI < 45 AND MACD_DIF > 0
             if bbp < self.params.bb_buy and rsi < self.params.rsi_buy and macd > self.params.macd_buy:
                 # BUY, BUY, BUY!!! (with all possible default parameters)
                 self.log('BUY CREATE, %.2f' % self.dataclose[0])
                 # Keep track of the created order to avoid a 2nd order
                 self.order = self.buy()
-        else:
+        #else:
+        if self.position.size > 0:
             # BB% > 0.8 OR RSI > 70 OR 止损触发（回撤>10%）
             # 如果超过10个bar，比如？天或者？周，且股票收益有大于5%，是否可以触发卖出？
             if (bbp > self.params.bb_sell and rsi > self.params.rsi_sell): # or self.dataclose[0] < self.buyprice * 0.95 or self.dataclose[0] > self.buyprice * 1.1:
-            # SELL, SELL, SELL!!! (with all possible default parameters)
-                self.log('SELL CREATE, %.2f' % self.dataclose[0])
+                # SELL 部分持仓：每次卖出持仓的 10%
+                pos_size = int(self.position.size)
+                # 计算要卖出的手数：按持仓的 10% 计算，并向上取整到 100 的整数倍（不超过持仓）
+                if pos_size <= 0:
+                    return
+
+                # 对于小于 100 股的持仓，直接全部卖出（无法达到 100 的最小单位）
+                if pos_size < 100:
+                    sell_size = pos_size
+                else:
+                    raw = pos_size * 0.1
+                    # 向上取整到最接近的 100 的整数倍
+                    sell_size = int(math.ceil(raw / 100.0) * 100)
+
+                    # 不超过持仓
+                    if sell_size > pos_size:
+                        sell_size = pos_size
+
+                if sell_size <= 0:
+                    return
+
+                self.log('SELL CREATE (partial rounded to 100), %0.2f, size=%d' % (self.dataclose[0], sell_size))
                 # Keep track of the created order to avoid a 2nd order
-                self.order = self.sell()
+                self.order = self.sell(size=sell_size)
 
     def stop(self):
         starting = self.broker.startingcash
@@ -135,7 +173,7 @@ class KnownOneStrategy(bt.Strategy):
         if self.position.size == 0:
             status = f"已卖出（空仓）, 总收益: {((final_value - starting) / starting):.2%}"
         else:
-            status = f"持仓中，持有价格: {self.buyprice:.2f}，当前价格：{self.dataclose[0]:.2f}，当前收益: {(self.dataclose[0] - self.buyprice) / self.buyprice:.2%}"
+            status = f"持仓中，持有价格: {self.cost / self.position.size:.2f}，当前价格：{self.dataclose[0]:.2f}，当前收益: {(self.dataclose[0] - self.buyprice) / self.buyprice:.2%}"
         self.log(f"股票状态: {status}")
 
         if ((final_value - starting) / starting) >= self.params.profit_target:

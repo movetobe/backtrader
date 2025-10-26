@@ -11,6 +11,7 @@ from data import *
 import os
 from KnownOneStrategy import *
 from KnownLog import *
+from custom_sizer import PercentSizer100
 import time
 
 def get_stock_list():
@@ -49,12 +50,12 @@ def backtest_stock(stock_code, beg, end, init_cash):
     # Set our desired cash start
     cerebro.broker.setcash(init_cash)
 
-    # Add a FixedSize sizer according to the stake
-    #cerebro.addsizer(bt.sizers.FixedSize, stake=1000)
-    cerebro.addsizer(bt.sizers.PercentSizer, percents=95)
+    # Add a custom Percent sizer: 每次买入占可用资金的百分比（这里设为10%），
+    # 并将股数向上取整到 100 的整数倍
+    cerebro.addsizer(PercentSizer100, percents=10, rounding=100)
 
     # Set the commission
-    cerebro.broker.setcommission(commission=0)
+    cerebro.broker.setcommission(commission=0.05)
 
     # Print out the starting conditions
     logger.write('Starting Name: %s Portfolio Value: %.2f' % (stock_code, cerebro.broker.getvalue()))
@@ -85,7 +86,7 @@ if __name__ == '__main__':
     for stock in stock_list:
         print(f"Backtesting stock: {stock}")
         try:
-            final_value = backtest_stock(stock_code=stock, beg='20240101', end='20251231', init_cash=100000)
+            final_value = backtest_stock(stock_code=stock, beg='20140101', end='20251231', init_cash=100000)
         except Exception as e:
             logger.write(f"Error backtesting stock {stock}: {e}")
             
