@@ -1,10 +1,11 @@
 import backtrader as bt
 import efinance as ef
 import pandas as pd
+# from efinance.common.config import MarketType
 
 def to_bt_dataframe(df):
-    columns_to_copy = ['日期', '开盘', '收盘', '最高', '最低', '成交量', '振幅']
-    new_column_names = ['Date', 'Open', 'Close', 'High', 'Low', 'Volume', 'OpenInterest']
+    columns_to_copy = ['股票名称', '股票代码', '日期', '开盘', '收盘', '最高', '最低', '成交量', '振幅']
+    new_column_names = ['name', 'code', 'Date', 'Open', 'Close', 'High', 'Low', 'Volume', 'OpenInterest']
     # 创建一个列名映射字典
     column_mapping = dict(zip(columns_to_copy, new_column_names))
 

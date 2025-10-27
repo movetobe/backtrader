@@ -43,7 +43,9 @@ def backtest_stock(stock_code, beg, end, init_cash):
 
     # 添加数据
     stock_result = HistoricalData(stock_code=stock_code, beg=beg, end=end).get_data() #中国神华
+    # print("stock_result:", stock_result)
     data = bt.feeds.PandasData(dataname=stock_result)
+    # print("data:",data)
     # Add the Data Feed to Cerebro
     cerebro.adddata(data)
 
@@ -58,15 +60,26 @@ def backtest_stock(stock_code, beg, end, init_cash):
     cerebro.broker.setcommission(commission=0.05)
 
     # Print out the starting conditions
-    logger.write('Starting Name: %s Portfolio Value: %.2f' % (stock_code, cerebro.broker.getvalue()))
+    # 如果stock_result不为空，则取第一行的'name'字段
+    if len(stock_result) > 0:
+        stock_name_ = stock_result.iloc[0]['name']
+        stock_code_ = stock_result.iloc[0]['code']
+    else:
+        logger.write('Error: stock_result is empty, stock:%s', stock_code)
+        print("Error: stock_result is empty, stock:", stock_code)
+        return
+
+    logger.write('Starting Name: %s, code: %s, Portfolio Value: %.2f' % (stock_name_, stock_code_, cerebro.broker.getvalue()))
 
     # Run over everything
     cerebro.run()
 
     # Print out the final result
-    logger.write('Final Name: %s Portfolio Value: %.2f' % (stock_code, cerebro.broker.getvalue()))
+    logger.write('Final Name: %s, code: %s, Portfolio Value: %.2f' % (stock_name_, stock_code_, cerebro.broker.getvalue()))
 
     logger.write('======================')
+
+    print("Backtesting finish:", stock_name_, stock_code_)
     # Plot the result
     #cerebro.plot()
 
@@ -86,7 +99,7 @@ if __name__ == '__main__':
     for stock in stock_list:
         print(f"Backtesting stock: {stock}")
         try:
-            final_value = backtest_stock(stock_code=stock, beg='20140101', end='20251231', init_cash=100000)
+            final_value = backtest_stock(stock_code=stock, beg='20200101', end='20251231', init_cash=100000)
         except Exception as e:
             logger.write(f"Error backtesting stock {stock}: {e}")
             
