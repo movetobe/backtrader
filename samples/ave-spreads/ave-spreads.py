@@ -10,6 +10,7 @@ from data import *
 import math
 warnings.filterwarnings('ignore')
 
+
 # 设置中文字体显示
 import matplotlib.pyplot as plt
 plt.rcParams["font.family"] = ["Heiti TC"]
@@ -48,6 +49,10 @@ class ave_spreads_strategy(bt.Strategy):
         # 策略可调参数（也可以改为 params）
         self.ma_days = 5
         self.ma_overlap_pct = 0.05
+        # 连续缩口触发天数（当开口连续缩小多少天时触发清仓）
+        self.ma_shrink_days = 3
+        # 当5/10日均线开口相对缩小超过该比例时触发清仓（例如 0.01 表示缩小超过1%触发）
+        self.ma_shrink_pct = 0.01
         # 买入使可用现金的百分比（0.8 表示用 80% 的现金买入）
         self.buy_cash_pct = 0.8
         # 取整单位（每次买卖按多少股为一单位，默认100）
@@ -154,14 +159,93 @@ class ave_spreads_strategy(bt.Strategy):
 
         return True
 
+    def _ma_consecutive_squeezed(self, days=20):
+        """检查过去 `days` 个交易日中，5/10/20 日均线是否始终近似重叠（即缝合）
+
+        实现细节：对每一天计算 d1 = abs(sma5 - sma10), d2 = abs(sma10 - sma20)，
+        要求这两组差值在过去 `days` 天内均小于等于起始日的 overlap_thresh（基于 sma20 的百分比阈值）。
+        """
+        # 需要足够的数据来计算 20 日均线
+        need_bars = 20 + days
+        if len(self) < need_bars:
+            return False
+
+        d1_list = []  # abs(sma5 - sma10)
+        d2_list = []  # abs(sma10 - sma20)
+
+        for off in range(days - 1, -1, -1):
+            try:
+                a = float(self.sma5[-off])
+                b = float(self.sma10[-off])
+                c = float(self.sma20[-off])
+            except Exception:
+                return False
+
+            d1_list.append(abs(a - b))
+            d2_list.append(abs(b - c))
+
+        try:
+            start_sma20 = float(self.sma20[-(days - 1)])
+            overlap_thresh = abs(start_sma20) * self.ma_overlap_pct
+        except Exception:
+            overlap_thresh = 0.0
+
+        # 要求窗口内所有天的 d1 和 d2 均在阈值以内
+        for i in range(len(d1_list)):
+            if not (d1_list[i] <= overlap_thresh and d2_list[i] <= overlap_thresh):
+                return False
+
+        return True
+
+    def _ma_narrowing_consecutive(self, days=3):
+        """检查最近是否出现连续 `days` 天的 5/10 日均线开口缩小。
+
+        实现：构造长度为 days+1 的开口绝对值序列 d_t,...,d_{t-days}，
+        检查每一天是否相较于前一天按照相对阈值 self.ma_shrink_pct 缩小：
+            d_i < d_{i-1} * (1 - self.ma_shrink_pct)
+        若全部为真则返回 True。
+        """
+        need_bars = 20 + days + 1
+        if len(self) < need_bars:
+            return False
+
+        d_list = []
+        # 从更早到当前，索引 offset 从 days 到 0
+        for off in range(days, -1, -1):
+            try:
+                a = float(self.sma5[-off])
+                b = float(self.sma10[-off])
+            except Exception:
+                return False
+            d_list.append(abs(a - b))
+
+        # 需要 days 次严格相对缩小判断（比较 d[i] 与 d[i-1]）
+        for i in range(1, len(d_list)):
+            prev = d_list[i - 1]
+            cur = d_list[i]
+            # 若前一天开口为 0，则无法判断相对缩小，视为不满足
+            if prev <= 0:
+                return False
+            if not (cur < prev * (1.0 - self.ma_shrink_pct)):
+                return False
+
+        return True
+
     def next(self):
         if self.order:
             return
 
         # 只使用开口扩张策略：当均线由近似重叠转为开口扩张时买入
         if not self.position:
-            ma_ok = self._ma_opening_expanding(days=self.ma_days)
-            if ma_ok:
+            # 更严格的买入条件：要求过去 self.ma_days 天均线缝合（squeezed），且当天出现开口（5>10>20）
+            ma_squeezed = self._ma_consecutive_squeezed(days=self.ma_days)
+            try:
+                d1_today = float(self.sma5[0]) - float(self.sma10[0])
+                d2_today = float(self.sma10[0]) - float(self.sma20[0])
+            except Exception:
+                d1_today = d2_today = 0.0
+
+            if ma_squeezed and d1_today > 0 and d2_today > 0:
                 cash = self.broker.getcash()
                 price = float(self.close[0])
                 if price <= 0 or cash <= 0:
@@ -180,52 +264,15 @@ class ave_spreads_strategy(bt.Strategy):
                 self.prev_expanded = False
                 self.second_sold = False
         else:
-            # 已持仓，按最短持仓天数卖出
-            self.hold_days += 1
-            # 检测当前是否为开口扩张（使用与买入时相同的检测函数）
+            # 当5/10日均线的“开口”连续缩小 self.ma_shrink_days 天时，清仓卖出
             try:
-                ma_ok_today = self._ma_opening_expanding(days=self.ma_days)
-            except Exception:
-                ma_ok_today = False
-
-            # 上升沿检测：只有在从非开口扩张到开口扩张时计为一次事件
-            if ma_ok_today and not self.prev_expanded:
-                # compute d1/d2 for logging
-                try:
-                    d1 = float(self.sma5[0]) - float(self.sma10[0])
-                    d2 = float(self.sma10[0]) - float(self.sma20[0])
-                except Exception:
-                    d1 = d2 = 0.0
-
-                self.expansion_events += 1
-                self.prev_expanded = True
-                self.log(f'MA expansion event #{self.expansion_events} detected, d1={d1:.4f}, d2={d2:.4f}')
-            elif not ma_ok_today:
-                self.prev_expanded = False
-
-            # 第2次开口扩张：减仓一半（向下取整到 rounding 单位，保证不超卖）
-            if self.expansion_events == 2 and not self.second_sold:
-                current_size = int(self.position.size)
-                half = current_size // 2
-                # 向下取整到 rounding 单位
-                sell_size = int((half // self.rounding) * self.rounding)
-                if sell_size <= 0 and current_size >= self.rounding:
-                    sell_size = self.rounding
-                if sell_size > 0:
-                    self.log(f'PARTIAL SELL (1/2) on 2nd expansion, sell_size={sell_size}, current={current_size}')
-                    self.order = self.sell(size=sell_size)
-                    # handled 2nd event; set flag to avoid repeating the partial sell
-                    self.second_sold = True
+                if self._ma_narrowing_consecutive(days=self.ma_shrink_days):
+                    self.log(f'FULL SELL on MA narrowing for {self.ma_shrink_days} days: {self.datas[0].datetime.date(0)}, hold_days: {self.hold_days}')
+                    self.order = self.sell(size=self.position.size)
                     return
-
-            # 第3次开口扩张：清仓
-            if self.expansion_events >= 3:
-                self.log(f'FULL SELL on 3rd expansion: {self.datas[0].datetime.date(0)}, hold_days: {self.hold_days}')
-                self.order = self.sell(size=self.position.size)
-                # reset counters to avoid duplicate sells
-                self.expansion_events = 0
-                self.prev_expanded = False
-                return
+            except Exception:
+                # 如果均线数据不足或检测失败，则忽略该条件，继续执行后续逻辑
+                pass
 
     def stop(self):
         if (self.buy_count == self.sell_count) and self.buy_count > 0:
@@ -395,7 +442,7 @@ def start_ave_spreads(start_date, end_date, initial_cash=100000, max_stocks=None
     # 存储所有回测结果
     all_results = []
     total_revenue = 0
-    stock_list = ['中烟香港']  # 测试用
+    stock_list = ['小米集团']  # 测试用
     # 逐个回测
     for i, stock_code in enumerate(tqdm(stock_list, desc="回测进度")):
         try:
