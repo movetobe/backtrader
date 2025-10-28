@@ -73,4 +73,3 @@ datas/*.py
 *.vscode
 datas/efinance/
 backtest_results.txt
-stock_list.txt
