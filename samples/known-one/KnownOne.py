@@ -99,7 +99,7 @@ if __name__ == '__main__':
     for stock in stock_list:
         print(f"Backtesting stock: {stock}")
         try:
-            final_value = backtest_stock(stock_code=stock, beg='20200101', end='20251231', init_cash=100000)
+            final_value = backtest_stock(stock_code=stock, beg='20200101', end='20251231', init_cash=10000)
         except Exception as e:
             logger.write(f"Error backtesting stock {stock}: {e}")
             

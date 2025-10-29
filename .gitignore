@@ -71,3 +71,5 @@ datas/*.py
 .idea/
 *.DS_Store
 *.vscode
+datas/efinance/
+backtest_results.txt
