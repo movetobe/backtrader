@@ -1,7 +1,7 @@
 import backtrader as bt
 import efinance as ef
 import pandas as pd
-# from efinance.common.config import MarketType
+from efinance.common.config import MarketType
 
 def to_bt_dataframe(df):
     columns_to_copy = ['股票名称', '股票代码', '日期', '开盘', '收盘', '最高', '最低', '成交量', '振幅']
@@ -17,9 +17,9 @@ def to_bt_dataframe(df):
     return new_df
 
 class HistoricalData(bt.feeds.PandasData):
-    def __init__(self, stock_code, beg, end):
+    def __init__(self, stock_code, beg, end, klt, fqt, market_type: Union[MarketType, None] = None):
         # 周线 前复权
-        stock_result = ef.stock.get_quote_history(stock_code, beg, end, klt=102, fqt=1)
+        stock_result = ef.stock.get_quote_history(stock_code, beg, end, klt, fqt, market_type)
 
         stock_result = to_bt_dataframe(stock_result)
         #self.data = bt.feeds.PandasData(dataname=stock_result)

@@ -13,17 +13,21 @@ from KnownOneStrategy import *
 from KnownLog import *
 from custom_sizer import PercentSizer100
 import time
+import yaml  # 新增导入
 
-def get_stock_list():
+def load_config():
+    """加载配置文件"""
     current_dir = os.path.dirname(os.path.abspath(__file__))
-    stock_list_path = os.path.join(current_dir, 'stock_list.txt')
+    config_path = os.path.join(current_dir, 'config.yml')
 
-    with open(stock_list_path, 'r', encoding='utf-8') as f:
-        stock_list = [line.strip() for line in f if line.strip() and not line.strip().startswith('#')]
+    if not os.path.exists(config_path):
+        raise FileNotFoundError(f"Configuration file not found at {config_path}")
 
-    return stock_list
+    with open(config_path, 'r', encoding='utf-8') as f:
+        return yaml.safe_load(f)
 
-def backtest_stock(stock_code, beg, end, init_cash):
+
+def backtest_stock(stock_code, beg, end, init_cash, klt, fqt, market_type: Union[MarketType, None] = None):
     # Create a cerebro entity
     cerebro = bt.Cerebro()
 
@@ -42,11 +46,8 @@ def backtest_stock(stock_code, beg, end, init_cash):
     #)
 
     # 添加数据
-    stock_result = HistoricalData(stock_code=stock_code, beg=beg, end=end).get_data() #中国神华
-    # print("stock_result:", stock_result)
+    stock_result = HistoricalData(stock_code,beg, end, klt, fqt, market_type).get_data()
     data = bt.feeds.PandasData(dataname=stock_result)
-    # print("data:",data)
-    # Add the Data Feed to Cerebro
     cerebro.adddata(data)
 
     # Set our desired cash start
@@ -93,14 +94,41 @@ if __name__ == '__main__':
     # 清空 backtest_results.txt 文件
     logger.clear()
 
-    # 获取股票列表
-    stock_list = get_stock_list()
+    # 读配置
+    config = load_config()
+    backtest_params = config.get('backtest_params', {})
+    def handle_stock(stock_type):
+        stock_list = config.get(stock_type, {})
+        if not stock_list:
+            return
 
-    for stock in stock_list:
-        print(f"Backtesting stock: {stock}")
-        try:
-            final_value = backtest_stock(stock_code=stock, beg='20200101', end='20251231', init_cash=100000)
-        except Exception as e:
-            logger.write(f"Error backtesting stock {stock}: {e}")
-            
-        time.sleep(5)  # 避免请求过于频繁
+        # 遍历股票列表
+        for stock in stock_list:
+            print(f"Backtesting stock: {stock}")
+            try:
+                if stock_type == 'HK_stock':
+                    final_value = backtest_stock(
+                        stock_code=stock,
+                        beg=backtest_params.get('beg', '20200101'),
+                        end=backtest_params.get('end', '20251231'),
+                        init_cash=backtest_params.get('init_cash', 100000),
+                        klt=backtest_params.get('klt', 102),
+                        fqt=backtest_params.get('fqt', 1),
+                        market_type=MarketType.Hongkong
+                    )
+                else:
+                    final_value = backtest_stock(
+                        stock_code=stock,
+                        beg=backtest_params.get('beg', '20200101'),
+                        end=backtest_params.get('end', '20251231'),
+                        init_cash=backtest_params.get('init_cash', 100000),
+                        klt=backtest_params.get('klt', 102),
+                        fqt=backtest_params.get('fqt', 1)
+                    )
+            except Exception as e:
+                logger.write(f"Error backtesting stock {stock}: {e}")
+
+            time.sleep(5)
+
+    handle_stock('A_stock')
+    handle_stock('HK_stock')
