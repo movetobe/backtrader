@@ -1,10 +1,26 @@
 import os
 import inspect
 
+
 class KnownLog:
-    def __init__(self, filename='backtest_results.txt'):
+    _instance = None
+
+    def __new__(cls, *args, **kwargs):
+        if not cls._instance:
+            cls._instance = super().__new__(cls)
+        return cls._instance
+
+    def __init__(self, filename=None, filedir="../../log/"):
+        if filename:
+            self.init(filename, filedir)
+            self.clear()
+
+    def init(self, filename="backtrade_result.txt", filedir="../../log/"):
         current_dir = os.path.dirname(os.path.abspath(__file__))
-        self.file_path = os.path.join(current_dir, filename)
+        log_path = os.path.join(current_dir, filedir)
+        os.makedirs(log_path, exist_ok=True)
+
+        self.file_path = os.path.join(log_path, filename)
 
     def write(self, txt, dt=None):
         # dt可以是datetime对象或字符串
@@ -30,3 +46,6 @@ class KnownLog:
     def clear(self):
         with open(self.file_path, 'w', encoding='utf-8') as f:
             pass  # 写入空内容，文件即被清空
+
+
+logger = KnownLog()

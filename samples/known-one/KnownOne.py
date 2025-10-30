@@ -1,23 +1,19 @@
 from __future__ import (absolute_import, division, print_function,
                         unicode_literals)
 
-import efinance as ef
-import datetime
-import pandas as pd
-import numpy as np
 # Import the backtrader platform
-import backtrader as bt
-from data import *
-import config
 
 from KnownOneStrategy import *
-from KnownLog import *
+from util.log.KnownLog import logger
 from custom_sizer import PercentSizer100
 import time
+import util.conf.config as config
+import os
 
-def get_stock_list():
+
+def get_stock_list(filename):
     current_dir = os.path.dirname(os.path.abspath(__file__))
-    stock_list_path = os.path.join(current_dir, 'stock_list.txt')
+    stock_list_path = os.path.join(current_dir, filename)
 
     with open(stock_list_path, 'r', encoding='utf-8') as f:
         stock_list = [line.strip() for line in f if line.strip() and not line.strip().startswith('#')]
@@ -93,22 +89,27 @@ def backtest_stock(stock_code, beg, end, init_cash):
 
 
 if __name__ == '__main__':
-    logger = KnownLog()
 
-    # 清空 backtest_results.txt 文件
-    logger.clear()
-
-    # 获取股票列表
-    stock_list = get_stock_list()
     backtest_params = config.backtest_param()
+    stock_file_list = config.stock_file_list()
 
-    for stock in stock_list:
-        print(f"Backtesting stock: {stock}")
-        try:
-            final_value = backtest_stock(stock_code=stock, beg=backtest_params.get('beg', '20200101'),
-                                         end=backtest_params.get('end', '20251231'),
-                                         init_cash=backtest_params.get('init_cash', 100000))
-        except Exception as e:
-            logger.write(f"Error backtesting stock {stock}: {e}")
+    if len(stock_file_list) == 0:
+        print(f"Error: stock_file_list is empty, please check config.yml")
+        exit(1)
 
-        time.sleep(5)  # 避免请求过于频繁
+    for stock_file in stock_file_list:
+        print(f"====== stock file: {stock_file} ======")
+        logger.init(filename=stock_file)
+
+        stock_list = get_stock_list(stock_file)
+
+        for stock in stock_list:
+            print(f"Backtesting stock: {stock}")
+            try:
+                final_value = backtest_stock(stock_code=stock, beg=backtest_params.get('beg', '20200101'),
+                                             end=backtest_params.get('end', '20251231'),
+                                             init_cash=backtest_params.get('init_cash', 100000))
+            except Exception as e:
+                logger.write(f"Error backtesting stock {stock}: {e}")
+
+            time.sleep(5)  # 避免请求过于频繁

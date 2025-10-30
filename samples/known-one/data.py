@@ -2,7 +2,7 @@ import backtrader as bt
 import efinance as ef
 import pandas as pd
 # from efinance.common.config import MarketType
-import config
+import util.conf.config as config
 
 
 def to_bt_dataframe(df):
