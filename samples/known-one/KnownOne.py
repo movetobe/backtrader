@@ -113,6 +113,7 @@ if __name__ == '__main__':
 
     # 获取股票列表
     stock_list = get_stock_list()
+    backtest_params = config.backtest_param()
     total_profit = 0
     for stock in stock_list:
         print(f"Backtesting stock: {stock}")
