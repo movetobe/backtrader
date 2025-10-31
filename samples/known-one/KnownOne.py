@@ -8,7 +8,8 @@ import numpy as np
 # Import the backtrader platform
 import backtrader as bt
 from data import *
-import os
+import config
+
 from KnownOneStrategy import *
 from KnownLog import *
 from custom_sizer import PercentSizer100
@@ -23,6 +24,7 @@ def get_stock_list():
 
     return stock_list
 
+
 def backtest_stock(stock_code, beg, end, init_cash):
     # Create a cerebro entity
     cerebro = bt.Cerebro()
@@ -30,7 +32,7 @@ def backtest_stock(stock_code, beg, end, init_cash):
     # Add a strategy
     cerebro.addstrategy(KnownOneStrategy)
     # Add a strategy
-    #strats = cerebro.optstrategy(
+    # strats = cerebro.optstrategy(
     #    TestStrategy,
     #    bb_period=range(7, 15),
     #    rsi_period=range(7, 15),
@@ -39,10 +41,10 @@ def backtest_stock(stock_code, beg, end, init_cash):
     #    bb_sell=np.arange(0.8, 1.0, 0.1),
     #    rsi_buy = range(50, 60, 10),
     #    rsi_sell=range(70, 100, 10)
-    #)
+    # )
 
     # 添加数据
-    stock_result = HistoricalData(stock_code=stock_code, beg=beg, end=end).get_data() #中国神华
+    stock_result = HistoricalData(stock_code=stock_code, beg=beg, end=end).get_data()  # 中国神华
     # print("stock_result:", stock_result)
     data = bt.feeds.PandasData(dataname=stock_result)
     # print("data:",data)
@@ -74,7 +76,8 @@ def backtest_stock(stock_code, beg, end, init_cash):
         print("Error: stock_result is empty, stock:", stock_code)
         return
 
-    logger.write('Starting Name: %s, code: %s, Portfolio Value: %.2f' % (stock_name_, stock_code_, cerebro.broker.getvalue()))
+    logger.write(
+        'Starting Name: %s, code: %s, Portfolio Value: %.2f' % (stock_name_, stock_code_, cerebro.broker.getvalue()))
 
     # Run over everything
     results = cerebro.run()
@@ -95,11 +98,12 @@ def backtest_stock(stock_code, beg, end, init_cash):
 
     print("Backtesting finish:", stock_name_, stock_code_)
     # Plot the result
-    #cerebro.plot()
+    # cerebro.plot()
 
     result = cerebro.broker.getvalue() - init_cash
     print(f"Profit for stock {stock_name_} ({stock_code_}): %.2f" % result)
     return result
+
 
 if __name__ == '__main__':
     logger = KnownLog()
@@ -113,7 +117,9 @@ if __name__ == '__main__':
     for stock in stock_list:
         print(f"Backtesting stock: {stock}")
         try:
-            profit = backtest_stock(stock_code=stock, beg='20200101', end='20251231', init_cash=10000)
+            profit = backtest_stock(stock_code=stock, beg=backtest_params.get('beg', '20200101'),
+                                         end=backtest_params.get('end', '20251231'),
+                                         init_cash=backtest_params.get('init_cash', 100000))
             logger.write('收益： %.2f' % profit)
             total_profit += profit
         except Exception as e:
