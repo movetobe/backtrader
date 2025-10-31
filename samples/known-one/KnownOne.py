@@ -59,6 +59,11 @@ def backtest_stock(stock_code, beg, end, init_cash):
     # Set the commission
     cerebro.broker.setcommission(commission=0.05)
 
+    # 添加分析器
+    cerebro.addanalyzer(bt.analyzers.Returns, _name='returns')  # 收益率分析器:cite[2]
+    cerebro.addanalyzer(bt.analyzers.DrawDown, _name='drawdown')  # 回撤分析器:cite[2]
+    cerebro.addanalyzer(bt.analyzers.SharpeRatio, _name='sharpe')  # 夏普比率分析器:cite[2]
+    cerebro.addanalyzer(bt.analyzers.TradeAnalyzer, _name='trades')  # 交易分析器:cite[2]
     # Print out the starting conditions
     # 如果stock_result不为空，则取第一行的'name'字段
     if len(stock_result) > 0:
@@ -72,19 +77,28 @@ def backtest_stock(stock_code, beg, end, init_cash):
     logger.write('Starting Name: %s, code: %s, Portfolio Value: %.2f' % (stock_name_, stock_code_, cerebro.broker.getvalue()))
 
     # Run over everything
-    cerebro.run()
+    results = cerebro.run()
+    strat = results[0]
 
+    # 打印收益率结果
+    returns_result = strat.analyzers.returns.get_analysis()
+    # 累计回报率可能是 'rtot' 或 'compound'，具体可打印 returns_result 查看
+    drawdown_result = strat.analyzers.drawdown.get_analysis()
+    sharpe_result = strat.analyzers.sharpe.get_analysis()
+    
     # Print out the final result
     logger.write('Final Name: %s, code: %s, Portfolio Value: %.2f' % (stock_name_, stock_code_, cerebro.broker.getvalue()))
-
+    logger.write('累计收益率： %.2f%%' % (returns_result.get('rtot', 0) * 100 if returns_result.get('rtot') is not None else 0))
+    logger.write('最大回撤： %.2f%%' % (drawdown_result['max']['drawdown'] if 'max' in drawdown_result and 'drawdown' in drawdown_result['max'] else 0))
+    logger.write('夏普比率： %.2f' % (sharpe_result['sharperatio'] if 'sharperatio' in sharpe_result else 0))
     logger.write('======================')
 
     print("Backtesting finish:", stock_name_, stock_code_)
     # Plot the result
     #cerebro.plot()
 
-    result = cerebro.broker.getvalue()
-
+    result = cerebro.broker.getvalue() - init_cash
+    print(f"Profit for stock {stock_name_} ({stock_code_}): %.2f" % result)
     return result
 
 if __name__ == '__main__':
@@ -95,12 +109,16 @@ if __name__ == '__main__':
 
     # 获取股票列表
     stock_list = get_stock_list()
-
+    total_profit = 0
     for stock in stock_list:
         print(f"Backtesting stock: {stock}")
         try:
-            final_value = backtest_stock(stock_code=stock, beg='20200101', end='20251231', init_cash=10000)
+            profit = backtest_stock(stock_code=stock, beg='20200101', end='20251231', init_cash=10000)
+            logger.write('收益： %.2f' % profit)
+            total_profit += profit
         except Exception as e:
             logger.write(f"Error backtesting stock {stock}: {e}")
-            
         time.sleep(5)  # 避免请求过于频繁
+
+    logger.write('======================')
+    logger.write('总收益： %.2f' % total_profit)

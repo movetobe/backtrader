@@ -58,7 +58,7 @@ class KnownOneStrategy(bt.Strategy):
         # 交易单位（按多少股为一单位，向上/向下取整时使用）
         self.rounding = 100
         # 每次交易目标金额（人民币或对应货币），用于按金额计算股数并按 self.rounding 取整
-        self.trade_amount = 1000.0
+        self.trade_amount = 2000.0
 
     def notify_order(self, order):
         if order.status in [order.Submitted, order.Accepted]:
