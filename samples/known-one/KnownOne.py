@@ -59,7 +59,7 @@ def backtest_stock(stock_code, beg, end, init_cash):
     cerebro.addsizer(PercentSizer100, percents=10, rounding=100)
 
     # Set the commission
-    cerebro.broker.setcommission(commission=0.05)
+    cerebro.broker.setcommission(commission=0.005)
 
     # 添加分析器
     cerebro.addanalyzer(bt.analyzers.Returns, _name='returns')  # 收益率分析器:cite[2]
@@ -120,7 +120,7 @@ if __name__ == '__main__':
         try:
             profit = backtest_stock(stock_code=stock, beg=backtest_params.get('beg', '20200101'),
                                          end=backtest_params.get('end', '20251231'),
-                                         init_cash=backtest_params.get('init_cash', 100000))
+                                         init_cash=backtest_params.get('init_cash', 10000))
             logger.write('收益： %.2f' % profit)
             total_profit += profit
         except Exception as e:
