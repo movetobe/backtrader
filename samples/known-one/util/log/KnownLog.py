@@ -1,5 +1,6 @@
 import os
 import inspect
+import util.conf.config as config
 
 
 class KnownLog:
@@ -13,14 +14,13 @@ class KnownLog:
     def __init__(self, filename=None, filedir="../../log/"):
         if filename:
             self.init(filename, filedir)
-            self.clear()
 
-    def init(self, filename="backtrade_result.txt", filedir="../../log/"):
-        current_dir = os.path.dirname(os.path.abspath(__file__))
-        log_path = os.path.join(current_dir, filedir)
+    def init(self, filename="backtrade_result.txt"):
+        log_path = config.logging()['path']
         os.makedirs(log_path, exist_ok=True)
-
         self.file_path = os.path.join(log_path, filename)
+        if os.path.exists(self.file_path):
+            self.clear()
 
     def write(self, txt, dt=None):
         # dt可以是datetime对象或字符串

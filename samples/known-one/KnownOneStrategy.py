@@ -5,6 +5,7 @@ from __future__ import (absolute_import, division, print_function,
 from data import *
 import math
 from util.log.KnownLog import logger
+from util.log.export_to_excel import exceler
 
 
 # Create a Strategy
@@ -66,13 +67,14 @@ class KnownOneStrategy(bt.Strategy):
         if order.status in [order.Completed]:
             if order.isbuy():
                 self.log(
-                    'BUY EXECUTED, Price: %.2f, Cost: %.2f, Comm %.2f' %
+                    'BUY EXECUTED, Price: %.2f, Cost: %.2f, Comm: %.2f' %
                     (order.executed.price,
                      order.executed.value,
                      order.executed.comm))
                 self.buyprice = order.executed.price
                 self.buycomm = order.executed.comm
                 self.buy_count += 1
+                exceler.write_op(op_type="BUY EXECUTED", op_detail=order.executed, time=self.datas[0].datetime.date(0))
                 # 更新持仓成本：使用 broker/position 的平均持仓价计算当前成本基数
                 try:
                     self.cost = abs(self.position.size) * float(self.position.price)
@@ -81,7 +83,7 @@ class KnownOneStrategy(bt.Strategy):
                     self.cost = self.cost + order.executed.price * order.executed.size
                 self.log("cost: %d" % self.cost)
             else:  # Sell
-                self.log('SELL EXECUTED, Price: %.2f, Cost: %.2f, Comm %.2f' %
+                self.log('SELL EXECUTED, Price: %.2f, Cost: %.2f, Comm: %.2f' %
                          (order.executed.price,
                           order.executed.value,
                           order.executed.comm))
@@ -166,7 +168,8 @@ class KnownOneStrategy(bt.Strategy):
                     return
 
                 self.log(
-                    'BUY CREATE, %.2f, size=%d (price=%.2f, cash=%.2f)' % (self.dataclose[0], chosen_size, price, cash))
+                    'BUY CREATE, Price: %.2f, Size: %d (price=%.2f, cash=%.2f)' % (
+                    self.dataclose[0], chosen_size, price, cash))
                 # Keep track of the created order to avoid a 2nd order
                 self.order = self.buy(size=chosen_size)
         # else:
@@ -196,7 +199,7 @@ class KnownOneStrategy(bt.Strategy):
                 if sell_size <= 0:
                     return
 
-                self.log('SELL CREATE, %0.2f, size=%d (price=%.2f, pos=%d)' % (
+                self.log('SELL CREATE, Price:  %0.2f, Size: %d (price=%.2f, pos=%d)' % (
                     self.dataclose[0], sell_size, price, pos_size))
                 # Keep track of the created order to avoid a 2nd order
                 self.order = self.sell(size=sell_size)

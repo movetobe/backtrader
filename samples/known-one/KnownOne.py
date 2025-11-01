@@ -5,17 +5,19 @@ from __future__ import (absolute_import, division, print_function,
 
 from KnownOneStrategy import *
 from util.log.KnownLog import logger
+from util.log.export_to_excel import exceler
 from custom_sizer import PercentSizer100
 import time
 import util.conf.config as config
 import os
 
 
-def get_stock_list(filename):
-    current_dir = os.path.dirname(os.path.abspath(__file__))
-    stock_list_path = os.path.join(current_dir, filename)
+def get_stock_list(file):
+    if not os.path.exists(file):
+        logger.write(f"file not exist:{file}\n")
+        return []
 
-    with open(stock_list_path, 'r', encoding='utf-8') as f:
+    with open(file, 'r', encoding='utf-8') as f:
         stock_list = [line.strip() for line in f if line.strip() and not line.strip().startswith('#')]
 
     return stock_list
@@ -69,6 +71,7 @@ def backtest_stock(stock_code, beg, end, init_cash):
 
     logger.write(
         'Starting Name: %s, code: %s, Portfolio Value: %.2f' % (stock_name_, stock_code_, cerebro.broker.getvalue()))
+    exceler.write_init(stock_name_, stock_code_, cerebro.broker.getvalue())
 
     # Run over everything
     cerebro.run()
@@ -76,6 +79,7 @@ def backtest_stock(stock_code, beg, end, init_cash):
     # Print out the final result
     logger.write(
         'Final Name: %s, code: %s, Portfolio Value: %.2f' % (stock_name_, stock_code_, cerebro.broker.getvalue()))
+    exceler.write_final(cerebro.broker.getvalue())
 
     logger.write('======================')
 
@@ -99,17 +103,26 @@ if __name__ == '__main__':
 
     for stock_file in stock_file_list:
         print(f"====== stock file: {stock_file} ======")
-        logger.init(filename=stock_file)
+
+        base_name = os.path.splitext(os.path.basename(stock_file))[0]
+
+        logger.init(filename=base_name + '.log')
+        exceler.init(filename=base_name + '.xlsx')
 
         stock_list = get_stock_list(stock_file)
 
+        if not stock_list:
+            continue
+
         for stock in stock_list:
-            print(f"Backtesting stock: {stock}")
+            print(f"Backtesting stock: {stock}\n")
             try:
                 final_value = backtest_stock(stock_code=stock, beg=backtest_params.get('beg', '20200101'),
                                              end=backtest_params.get('end', '20251231'),
                                              init_cash=backtest_params.get('init_cash', 100000))
             except Exception as e:
-                logger.write(f"Error backtesting stock {stock}: {e}")
+                logger.write(f"Error backtesting stock {stock}: {e}\n")
 
             time.sleep(5)  # 避免请求过于频繁
+
+        exceler.export_to_excel()
