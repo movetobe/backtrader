@@ -73,3 +73,6 @@ datas/*.py
 *.vscode
 datas/efinance/
 backtest_results.txt
+samples/known-one/logs
+samples/known-one/data/reports/
+

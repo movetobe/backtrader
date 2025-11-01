@@ -1,16 +1,12 @@
 from __future__ import (absolute_import, division, print_function,
                         unicode_literals)
 
-import efinance as ef
-import datetime
-import pandas as pd
-import numpy as np
 # Import the backtrader platform
-import backtrader as bt
 from data import *
-import os
-from KnownLog import *
+from util.log.KnownLog import logger
 import math
+from util.log.export_to_excel import exceler
+
 
 # Create a Strategy
 class KnownOneStrategy(bt.Strategy):
@@ -28,10 +24,10 @@ class KnownOneStrategy(bt.Strategy):
         ('macd_sell', 0),
         ('profit_target', 0.08)
     )
+
     def log(self, txt, dt=None):
         ''' Logging function for this strategy'''
         dt = dt or self.datas[0].datetime.date(0)
-        logger = KnownLog()
         logger.write(txt, dt)
 
     def __init__(self):
@@ -52,9 +48,10 @@ class KnownOneStrategy(bt.Strategy):
         self.buy_count = 0
         self.sell_count = 0
 
-        self.bb  = bt.indicators.BollingerBands(self.datas[0], period=self.params.bb_period)
+        self.bb = bt.indicators.BollingerBands(self.datas[0], period=self.params.bb_period)
         self.rsi = bt.indicators.RSI(self.datas[0], period=self.params.rsi_period)
-        self.macd = bt.indicators.MACD(self.datas[0], period_me1=12, period_me2=26, period_signal=self.params.macd_period)
+        self.macd = bt.indicators.MACD(self.datas[0], period_me1=12, period_me2=26,
+                                       period_signal=self.params.macd_period)
         # 交易单位（按多少股为一单位，向上/向下取整时使用）
         self.rounding = 100
         # 每次交易目标金额（人民币或对应货币），用于按金额计算股数并按 self.rounding 取整
@@ -70,36 +67,46 @@ class KnownOneStrategy(bt.Strategy):
         if order.status in [order.Completed]:
             if order.isbuy():
                 self.log(
-                    'BUY EXECUTED, Price: %.2f, Cost: %.2f, Comm %.2f' %
+                    'BUY EXECUTED, Price: %.2f, Cost: %.2f, Comm: %.2f' %
                     (order.executed.price,
                      order.executed.value,
                      order.executed.comm))
                 self.buyprice = order.executed.price
                 self.buycomm = order.executed.comm
                 self.buy_count += 1
+
                 # 更新持仓成本：使用 broker/position 的平均持仓价计算当前成本基数
                 try:
                     self.cost = abs(self.position.size) * float(self.position.price)
                 except Exception:
                     # 兜底：若 position.price 不可用，使用累计成交价
                     self.cost = self.cost + order.executed.price * order.executed.size
-                self.log("cost: %d" % self.cost)
+                self.log("cost: %.2f" % self.cost)
+                exceler.write_operation(operation_type="BUY EXECUTED", operation_detail=order.executed,
+                                        accumulated_cost=self.cost,
+                                        holding_size=self.position.size,
+                                        time=self.datas[0].datetime.date(0))
             else:  # Sell
-                self.log('SELL EXECUTED, Price: %.2f, Cost: %.2f, Comm %.2f' %
-                           (order.executed.price,
-                           order.executed.value,
+                self.log('SELL EXECUTED, Price: %.2f, Cost: %.2f, Comm: %.2f' %
+                         (order.executed.price,
+                          order.executed.value,
                           order.executed.comm))
                 self.sell_count += 1
+
                 # 卖出后更新持仓成本：基于 position 中记录的平均价与持仓数量重新计算
                 try:
                     self.cost = abs(self.position.size) * float(self.position.price)
                 except Exception:
                     # 兜底：若 position.price 不可用，按卖出价减少（旧逻辑）
                     self.cost = self.cost - order.executed.price * order.executed.size
-                self.log("cost: %d" % self.cost)
+                self.log("cost: %.2f" % self.cost)
+                exceler.write_operation(operation_type="SELL EXECUTED", operation_detail=order.executed,
+                                        accumulated_cost=self.cost,
+                                        holding_size=self.position.size,
+                                        time=self.datas[0].datetime.date(0))
             self.bar_executed = len(self)
 
-        #elif order.status in [order.Canceled, order.Margin, order.Rejected]:
+        # elif order.status in [order.Canceled, order.Margin, order.Rejected]:
         #    self.log('Order Canceled/Margin/Rejected')
 
         # Write down: no pending order
@@ -112,6 +119,7 @@ class KnownOneStrategy(bt.Strategy):
 
         self.log('OPERATION PROFIT, GROSS %.2f, NET %.2f' %
                  (trade.pnl, trade.pnlcomm))
+        # todo excel
 
     def next(self):
         # Check if an order is pending ... if yes, we cannot send a 2nd one
@@ -123,16 +131,22 @@ class KnownOneStrategy(bt.Strategy):
         rsi = self.rsi[0]
         macd = self.macd[0]
 
-
         if bbp < self.params.bb_buy and rsi < self.params.rsi_buy and macd > self.params.macd_buy:
             # BUY, BUY, BUY!!! (with all possible default parameters)
             self.log('BUY SIGNAL, %.2f' % self.dataclose[0])
-        if (bbp > self.params.bb_sell and rsi > self.params.rsi_sell): # or self.dataclose[0] < self.buyprice * 0.95 or self.dataclose[0] > self.buyprice * 1.1:
+
+            exceler.write_signal(operation_type="BUY SIGNAL", price=self.dataclose[0],
+                                 time=self.datas[0].datetime.date(0))
+        if (
+                bbp > self.params.bb_sell and rsi > self.params.rsi_sell):  # or self.dataclose[0] < self.buyprice * 0.95 or self.dataclose[0] > self.buyprice * 1.1:
+
             # SELL, SELL, SELL!!! (with all possible default parameters)
             self.log('SELL SIGNAL, %.2f' % self.dataclose[0])
+            exceler.write_signal(operation_type="SELL SIGNAL", price=self.dataclose[0],
+                                 time=self.datas[0].datetime.date(0))
 
         # Check if we are in the market
-        #if not self.position:
+        # if not self.position:
         if self.broker.getcash() > 0:
             # BB% < 0.2 AND RSI < 45 AND MACD_DIF > 0
             if bbp < self.params.bb_buy and rsi < self.params.rsi_buy and macd > self.params.macd_buy:
@@ -168,51 +182,77 @@ class KnownOneStrategy(bt.Strategy):
 
                 if chosen_size <= 0:
                     return
-
-                self.log('BUY CREATE, %.2f, size=%d (price=%.2f, cash=%.2f)' % (self.dataclose[0], chosen_size, price, cash))
+                self.log(
+                    'BUY CREATE, Price: %.2f, Size: %d (price=%.2f, cash=%.2f)' % (
+                        self.dataclose[0], chosen_size, price, cash))
+                exceler.write_op_create(operation_type="BUY CREATE", price=self.dataclose[0], size=chosen_size,
+                                        time=self.datas[0].datetime.date(0))
                 # Keep track of the created order to avoid a 2nd order
                 self.order = self.buy(size=chosen_size)
-        #else:
-        if self.position.size > 0:
-            # BB% > 0.8 OR RSI > 70 OR 止损触发（回撤>10%）
-            # 如果超过10个bar，比如？天或者？周，且股票收益有大于5%，是否可以触发卖出？
-            if (bbp > self.params.bb_sell and rsi > self.params.rsi_sell): # or self.dataclose[0] < self.buyprice * 0.95 or self.dataclose[0] > self.buyprice * 1.1:
-                # SELL: 按目标金额计算要卖出的股数，并向下取整到 self.rounding 的倍数（不超过持仓）
-                pos_size = int(self.position.size)
-                if pos_size <= 0:
-                    return
+            # else:
+            if self.position.size > 0:
+                # BB% > 0.8 OR RSI > 70 OR 止损触发（回撤>10%）
+                # 如果超过10个bar，比如？天或者？周，且股票收益有大于5%，是否可以触发卖出？
+                if (
+                        bbp > self.params.bb_sell and rsi > self.params.rsi_sell):  # or self.dataclose[0] < self.buyprice * 0.95 or self.dataclose[0] > self.buyprice * 1.1:
+                    # SELL: 按目标金额计算要卖出的股数，并向下取整到 self.rounding 的倍数（不超过持仓）
+                    pos_size = int(self.position.size)
+                    if pos_size <= 0:
+                        return
 
-                price = float(self.dataclose[0])
-                raw_shares = self.trade_amount / price
-                # 向下取整到 rounding 的倍数
-                sell_size = int(math.floor(raw_shares / self.rounding) * self.rounding)
+                    price = float(self.dataclose[0])
+                    raw_shares = self.trade_amount / price
+                    # 向下取整到 rounding 的倍数
+                    sell_size = int(math.floor(raw_shares / self.rounding) * self.rounding)
 
-                # 若持仓不足一个 rounding 单位，全部卖出
-                if pos_size < self.rounding:
-                    sell_size = pos_size
+                    # 若持仓不足一个 rounding 单位，全部卖出
+                    if pos_size < self.rounding:
+                        sell_size = pos_size
 
-                # 限制不超过持仓
-                if sell_size > pos_size:
-                    sell_size = pos_size
+                    # 限制不超过持仓
+                    if sell_size > pos_size:
+                        sell_size = pos_size
 
-                if sell_size <= 0:
-                    return
+                    if sell_size <= 0:
+                        return
 
-                self.log('SELL CREATE, %0.2f, size=%d (price=%.2f, pos=%d)' % (self.dataclose[0], sell_size, price, pos_size))
-                # Keep track of the created order to avoid a 2nd order
-                self.order = self.sell(size=sell_size)
+                    self.log('SELL CREATE, Price:  %0.2f, Size: %d (price=%.2f, pos=%d)' % (
+                        self.dataclose[0], sell_size, price, pos_size))
+                    exceler.write_op_create(operation_type="SELL CREATE", price=self.dataclose[0], size=sell_size,
+                                            time=self.datas[0].datetime.date(0))
+                    # Keep track of the created order to avoid a 2nd order
+                    self.order = self.sell(size=sell_size)
+
 
     def stop(self):
         starting = self.broker.startingcash
         final_value = self.broker.getvalue()
-        
+
         if self.position.size == 0:
-            status = f"已卖出（空仓）, 总收益: {((final_value - starting) / starting):.2%}"
+            profit_rate = ((final_value - starting) / starting)
+            status = f"已卖出（空仓）, 总收益: {profit_rate:.2%}"
+            exceler.write_state({
+                "position_status": "空仓",
+                "gross": final_value - starting,
+                "yield_rate": profit_rate
+            })
         else:
-            status = f"持仓中，持有价格: {self.cost / self.position.size:.2f}，当前价格：{self.dataclose[0]:.2f}，当前收益: {(self.dataclose[0] - self.buyprice) / self.buyprice:.2%}"
+            profit_rate = (self.dataclose[0] - self.buyprice) / self.buyprice
+            cost_price = self.cost / self.position.size
+            current_price = self.dataclose[0]
+            status = f"持仓中，持有价格: {self.cost / self.position.size:.2f}，当前价格：{self.dataclose[0]:.2f}，当前收益: {profit_rate:.2%}"
+            exceler.write_state({
+                "position_status": "持仓中",
+                "gross": final_value - starting,
+                "cost_price": cost_price,
+                "current_price": current_price,
+                "yield_rate": profit_rate
+            })
         self.log(f"股票状态: {status}")
 
         if ((final_value - starting) / starting) >= self.params.profit_target:
-            self.log('(bb Period %2d) (rsi period %2d) (macd period %2d) (bb_buy %2f) (bb_sell %2f) (rsi_buy %2d) (rsi_sell %2d) (buy_count %2d) (sell_count %2d) Ending Value %.2f' %
-                 (self.params.bb_period, self.params.rsi_period, self.params.macd_period, self.params.bb_buy, self.params.bb_sell, self.params.rsi_buy, self.params.rsi_sell, self.buy_count, self.sell_count, final_value))
-            
+            self.log(
+                '(bb Period %2d) (rsi period %2d) (macd period %2d) (bb_buy %2f) (bb_sell %2f) (rsi_buy %2d) (rsi_sell %2d) (buy_count %2d) (sell_count %2d) Ending Value %.2f' %
+                (self.params.bb_period, self.params.rsi_period, self.params.macd_period, self.params.bb_buy,
+                 self.params.bb_sell, self.params.rsi_buy, self.params.rsi_sell, self.buy_count, self.sell_count,
+                 final_value))

@@ -2,8 +2,7 @@ import backtrader as bt
 import efinance as ef
 import pandas as pd
 # from efinance.common.config import MarketType
-import config
-
+import util.conf.config as config
 
 def to_bt_dataframe(df):
     columns_to_copy = ['股票名称', '股票代码', '日期', '开盘', '收盘', '最高', '最低', '成交量', '振幅']
