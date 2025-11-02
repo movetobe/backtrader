@@ -65,7 +65,7 @@ def backtest_stock(stock_code, beg, end, init_cash):
     cerebro.addsizer(PercentSizer100, percents=10, rounding=100)
 
     # Set the commission
-    cerebro.broker.setcommission(commission=0.05)
+    cerebro.broker.setcommission(commission=0.005)
 
     # 添加分析器
     cerebro.addanalyzer(bt.analyzers.Returns, _name='returns')  # 收益率分析器:cite[2]
