@@ -9,7 +9,6 @@ import numpy as np
 import backtrader as bt
 from data import *
 
-
 from KnownOneStrategy import *
 from util.log.KnownLog import logger
 from util.log.export_to_excel import exceler
@@ -25,9 +24,14 @@ def get_stock_list(file):
         logger.write(f"file not exist:{file}\n")
         return []
 
+    stock_list = []
     with open(file, 'r', encoding='utf-8') as f:
-        stock_list = [line.strip() for line in f if line.strip() and not line.strip().startswith('#')]
-
+        for line in f:
+            # 移除注释和空白
+            code = line.split('#')[0].strip()
+            if not code:
+                continue
+            stock_list.append(code)
     return stock_list
 
 
@@ -50,7 +54,7 @@ def backtest_stock(stock_code, beg, end, init_cash):
     # )
 
     # 添加数据
-    stock_result = HistoricalData(stock_code=stock_code, beg=beg, end=end).get_data()  # 中国神华
+    stock_result = HistoricalData(stock_code=stock_code, beg=beg, end=end).get_data()
     # print("stock_result:", stock_result)
     data = bt.feeds.PandasData(dataname=stock_result)
     # print("data:",data)
