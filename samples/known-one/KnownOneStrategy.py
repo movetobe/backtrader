@@ -75,12 +75,7 @@ class KnownOneStrategy(bt.Strategy):
                 self.buycomm = order.executed.comm
                 self.buy_count += 1
 
-                # 更新持仓成本：使用 broker/position 的平均持仓价计算当前成本基数
-                try:
-                    self.cost = abs(self.position.size) * float(self.position.price)
-                except Exception:
-                    # 兜底：若 position.price 不可用，使用累计成交价
-                    self.cost = self.cost + order.executed.price * order.executed.size
+                self.cost = self.cost + float(order.executed.price) * abs(order.executed.size)
                 self.log("cost: %.2f" % self.cost)
                 exceler.write_operation(operation_type="BUY EXECUTED", operation_detail=order.executed,
                                         accumulated_cost=self.cost,
@@ -92,13 +87,7 @@ class KnownOneStrategy(bt.Strategy):
                           order.executed.value,
                           order.executed.comm))
                 self.sell_count += 1
-
-                # 卖出后更新持仓成本：基于 position 中记录的平均价与持仓数量重新计算
-                try:
-                    self.cost = abs(self.position.size) * float(self.position.price)
-                except Exception:
-                    # 兜底：若 position.price 不可用，按卖出价减少（旧逻辑）
-                    self.cost = self.cost - order.executed.price * order.executed.size
+                self.cost = self.cost - float(order.executed.price) * abs(order.executed.size)
                 self.log("cost: %.2f" % self.cost)
                 exceler.write_operation(operation_type="SELL EXECUTED", operation_detail=order.executed,
                                         accumulated_cost=self.cost,
@@ -213,6 +202,12 @@ class KnownOneStrategy(bt.Strategy):
                     if sell_size > pos_size:
                         sell_size = pos_size
 
+                    # Ensure minimum sell of 100 shares when possible
+                    min_sell = max(100, self.rounding)
+                    if pos_size >= min_sell and sell_size < min_sell:
+                        # set to min_sell but not exceed current position
+                        sell_size = min(min_sell, pos_size)
+
                     if sell_size <= 0:
                         return
 
@@ -237,10 +232,13 @@ class KnownOneStrategy(bt.Strategy):
                 "yield_rate": profit_rate
             })
         else:
-            profit_rate = (self.dataclose[0] - self.buyprice) / self.buyprice
-            cost_price = self.cost / self.position.size
-            current_price = self.dataclose[0]
-            status = f"持仓中，持有价格: {self.cost / self.position.size:.2f}，当前价格：{self.dataclose[0]:.2f}，当前收益: {profit_rate:.2%}"
+            # 依据用户要求的公式：收益率 = (当前价格 - 持仓成本) / 持仓数量
+            pos_size = abs(int(self.position.size))
+            current_price = float(self.dataclose[0])
+            cost_price = float(self.cost) / pos_size if pos_size > 0 else float('nan')
+            profit_rate = ((current_price - cost_price) / cost_price)
+
+            status = f"持仓中，持有价格: {cost_price:.2f}，当前价格：{current_price:.2f}，每股收益: {profit_rate:.2%}"
             exceler.write_state({
                 "position_status": "持仓中",
                 "gross": final_value - starting,

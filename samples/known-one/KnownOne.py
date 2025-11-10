@@ -125,6 +125,7 @@ def backtest_stock(stock_code, beg, end, init_cash):
     # cerebro.plot()
 
     result = cerebro.broker.getvalue() - init_cash
+
     print(f"Profit for stock {stock_name_} ({stock_code_}): %.2f" % result)
     return result
 
@@ -187,7 +188,7 @@ if __name__ == '__main__':
                     f"======================\n"
                 )
 
-            time.sleep(5)  # 避免请求过于频繁
+            time.sleep(10)  # 避免请求过于频繁
 
         exceler.export_to_excel()
 
