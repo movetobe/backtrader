@@ -218,7 +218,6 @@ class KnownOneStrategy(bt.Strategy):
                     # Keep track of the created order to avoid a 2nd order
                     self.order = self.sell(size=sell_size)
 
-
     def stop(self):
         starting = self.broker.startingcash
         final_value = self.broker.getvalue()
@@ -236,7 +235,10 @@ class KnownOneStrategy(bt.Strategy):
             pos_size = abs(int(self.position.size))
             current_price = float(self.dataclose[0])
             cost_price = float(self.cost) / pos_size if pos_size > 0 else float('nan')
-            profit_rate = ((current_price - cost_price) / cost_price)
+            if cost_price > 0:
+                profit_rate = ((current_price - cost_price) / cost_price)
+            else:  # 成本为负时，每股收益率为无穷大，这里返回0
+                profit_rate = 0
 
             status = f"持仓中，持有价格: {cost_price:.2f}，当前价格：{current_price:.2f}，每股收益: {profit_rate:.2%}"
             exceler.write_state({
