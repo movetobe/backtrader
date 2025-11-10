@@ -1,14 +1,14 @@
 backtest_params:
-  beg: '20200101'  # 回测开始日期(YYYYMMDD)
+  beg: '20230101'  # 回测开始日期(YYYYMMDD)
   end: '20251231'  # 回测结束日期(YYYYMMDD)
-  init_cash: 100000.00  # 初始资金(保留两位小数)
+  init_cash: 10000.00  # 初始资金(保留两位小数)
   klt: 102  # K线类型: 101(日), 102(周), 103(月), [1,5,15,30,60](分钟)
   fqt: 1    # 复权类型: 0(不复权), 1(前复权), 2(后复权)
 
 data_source:
   data_dir: "data/" # 股票列表文件目录
   stock_file_list:
-    - 'stock_list_bak.txt'
+    - 'stock_lists_head.txt'
 
 output:
   reports_dir: "data/reports/"  # 报告输出目录
