@@ -21,8 +21,9 @@ def to_bt_dataframe(df):
 
 def handle_stock_code(stock_code):
     is_hk = stock_code.endswith('-HK')
-    code = stock_code.replace('-HK', '').strip() if is_hk else stock_code
-    return is_hk, code
+    is_etf = stock_code.endswith('-ETF')
+    code = stock_code.replace('-HK', '').replace('-ETF', '').strip() if is_hk or is_etf else stock_code
+    return is_hk, is_etf, code
 
 
 class HistoricalData(bt.feeds.PandasData):
@@ -30,7 +31,7 @@ class HistoricalData(bt.feeds.PandasData):
         # 周线 前复权
         backtest_params = config.backtest_param()
 
-        is_hk, code = handle_stock_code(stock_code)
+        is_hk, _, code = handle_stock_code(stock_code)
         if is_hk:
             stock_result = ef.stock.get_quote_history(code, beg, end, klt=backtest_params.get('klt', 102),
                                                       fqt=backtest_params.get('fqt', 1),

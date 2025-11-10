@@ -66,16 +66,17 @@ class ToExcel:
             '时间': kwargs.get('time'),
             '操作': kwargs.get('op_type'),
             '价格': kwargs.get('price'),
-            '数量': kwargs.get('size'),
+            '数量': abs(kwargs.get('size')) if kwargs.get('size') is not None else None,
             '交易金额': kwargs.get('value'),
-            '交易佣金': kwargs.get('comm'),
+            '交易佣金': f"{kwargs.get('comm'):.2f}" if kwargs.get('comm') is not None else None,
             '当前持仓': kwargs.get('hold_size'),
             # '累计成本': kwargs.get('acc_cost'),
-            '成本价/现价': f"成本：{self.cost_price:.3f}\n现价：{self.current_price}" if self.cost_price is not None and self.current_price is not None else None,
+            '成本价': f"{self.cost_price:.3f}" if self.cost_price is not None else None,
+            '现价': f"{self.current_price}" if self.current_price is not None else None,
+            '涨幅': f"{self.yield_rate:.2%}" if self.yield_rate is not None else None,
             '持仓状态': f"{self.position_status}\n({self.hold_size}股)" if self.position_status == "持仓中" else self.position_status,
             '最终资金': f"{self.final_portfolio:.2f}" if self.final_portfolio is not None else None,
             '总收益': f"{self.gross:.2f}" if self.gross is not None else None,
-            '收益率': f"{self.yield_rate:.2%}" if self.yield_rate is not None else None,
             '累计收益率': f"{self.cumulative_return:.2f}%" if self.cumulative_return is not None else None,
             '最大回撤': f"{self.max_drawdown:.2f}%" if self.max_drawdown is not None else None,
             '夏普比率': f"{self.sharpe_ratio:.2f}" if self.sharpe_ratio is not None else None,
@@ -137,10 +138,10 @@ class ToExcel:
         ws.freeze_panes = "A2"
 
         # 需要合并的单元格的列编号
-        merge_config = ['A', 'B', 'C', 'K', 'L', 'M', 'N', 'O','P','Q','R']
+        merge_config = ['A', 'B', 'C', 'K', 'L', 'M', 'N', 'O', 'P', 'Q', 'R', 'S']
 
         # 需要换行展示的单元格列编号
-        wrap_config = ['K', 'L']
+        wrap_config = ['N']
 
         # 获取所有股票代码
         stock_codes = df['代码'].unique()

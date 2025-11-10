@@ -8,7 +8,8 @@ import numpy as np
 # Import the backtrader platform
 import backtrader as bt
 from data import *
-
+import strategy.commission as comm
+from efinance.common.config import MarketType
 from KnownOneStrategy import *
 from util.log.KnownLog import logger
 from util.log.export_to_excel import exceler
@@ -69,7 +70,12 @@ def backtest_stock(stock_code, beg, end, init_cash):
     cerebro.addsizer(PercentSizer100, percents=10, rounding=100)
 
     # Set the commission
-    cerebro.broker.setcommission(commission=0.005)
+    if stock_code.endswith('-HK'):
+        cerebro.broker.addcommissioninfo(comm.StockCommission(market_type=MarketType.Hongkong))
+    elif stock_code.endswith('-ETF'):
+        cerebro.broker.addcommissioninfo(comm.StockCommission(is_etf=True))
+    else:
+        cerebro.broker.addcommissioninfo(comm.StockCommission())
 
     # 添加分析器
     cerebro.addanalyzer(bt.analyzers.Returns, _name='returns')  # 收益率分析器:cite[2]
@@ -129,6 +135,7 @@ def backtest_stock(stock_code, beg, end, init_cash):
     # cerebro.plot()
 
     result = cerebro.broker.getvalue() - init_cash
+
     print(f"Profit for stock {stock_name_} ({stock_code_}): %.2f" % result)
     return result
 
@@ -191,7 +198,7 @@ if __name__ == '__main__':
                     f"======================\n"
                 )
 
-            time.sleep(5)  # 避免请求过于频繁
+            time.sleep(10)  # 避免请求过于频繁
 
         exceler.export_to_excel()
 
