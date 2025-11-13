@@ -59,9 +59,19 @@ def logging():
     }
 
 
+def is_plot():
+    """Check if plotting is enabled in config
+
+    Returns:
+        bool: True if plotting is enabled, False otherwise
+    """
+    config = load_config()
+    return config.get('output', {}).get("is_draw", False)
+
+
 def output_dir():
     config = load_config()
     return os.path.join(
         PROJECT_ROOT,
-        config.get('output', {}).get('reports_dir', 'data/reports/')
+        config.get('output', {}).get('reports_dir', 'reports/')
     )

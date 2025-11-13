@@ -8,13 +8,14 @@ backtest_params:
 data_source:
   data_dir: "data/" # 股票列表文件目录
   stock_file_list:
-    - 'stock_lists_head.txt'
+    - 'zml.sh'
 
 output:
-  is_draw: false # 是否画图 todo
-  reports_dir: "data/reports/"  # 报告输出目录
+  reports_dir: "reports/"  # 报告输出目录
+  is_draw: false # 是否画图：true/false
 
 logging:
+  log_dir: "logs/" # 日志文件目录
   file: 'logs/backtest.log'  # 日志文件路径
   level: 'INFO'  # 日志级别: DEBUG/INFO/WARNING/ERROR
   max_size: '10'  # 单个日志文件最大大小MB
