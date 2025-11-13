@@ -1,15 +1,7 @@
 from __future__ import (absolute_import, division, print_function,
                         unicode_literals)
 
-import efinance as ef
-import datetime
-import pandas as pd
-import numpy as np
-# Import the backtrader platform
-import backtrader as bt
-from data import *
 import strategy.commission as comm
-from efinance.common.config import MarketType
 from KnownOneStrategy import *
 from util.log.KnownLog import logger
 from util.log.export_to_excel import exceler
@@ -132,7 +124,8 @@ def backtest_stock(stock_code, beg, end, init_cash):
 
     print(f"Backtesting finish:{stock_name_}({stock_code_})")
     # Plot the result
-    # cerebro.plot()
+    if config.is_plot():
+        cerebro.plot()
 
     result = cerebro.broker.getvalue() - init_cash
 
