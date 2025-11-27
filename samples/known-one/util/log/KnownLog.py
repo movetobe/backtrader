@@ -38,7 +38,8 @@ class KnownLog:
         line_number = stack_info.lineno
 
         # 格式化输出
-        log_line = f"[{file_name}:{line_number}] {dt_str} {txt}\n"
+        # log_line = f"[{file_name}:{line_number}] {dt_str} {txt}\n"
+        log_line = f"{dt_str} {txt}\n"
 
         with open(self.file_path, 'a', encoding='utf-8') as f:
             f.write(log_line)

@@ -112,9 +112,13 @@ class ToExcel:
         if holding_size is not None:
             self.hold_size = holding_size
 
+        op_price = operation_detail.price
+        if operation_type == "SELL EXECUTED":
+            op_price = operation_detail.pprice
+
         self.data.append(self._create_record(time=time,
                                              op_type=operation_type,
-                                             price=operation_detail.price,
+                                             price=op_price,
                                              size=operation_detail.size,
                                              value=operation_detail.value,
                                              comm=operation_detail.comm,

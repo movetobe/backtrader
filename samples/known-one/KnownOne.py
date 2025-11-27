@@ -1,34 +1,25 @@
 from __future__ import (absolute_import, division, print_function,
                         unicode_literals)
 
-import strategy.commission as comm
-from KnownOneStrategy import *
+import common.commission as comm
+from strategy.KnownOneStrategy import *
 from util.log.KnownLog import logger
 from util.log.export_to_excel import exceler
-from custom_sizer import PercentSizer100
+from strategy.custom_sizer import PercentSizer100
+from common.data import HistoricalData
 import time
 import util.conf.config as config
 import os
 import sys
+import util.util as util
 
 
-def get_stock_list(file):
-    if not os.path.exists(file):
-        logger.write(f"file not exist:{file}\n")
-        return []
+def backtest_stock(stock_code):
+    backtest_params = config.backtest_param()
+    beg = backtest_params.get('beg', '20200101'),
+    end = backtest_params.get('end', '20251231'),
+    init_cash = backtest_params.get('init_cash', 100000)
 
-    stock_list = []
-    with open(file, 'r', encoding='utf-8') as f:
-        for line in f:
-            # 移除注释和空白
-            code = line.split('#')[0].strip()
-            if not code:
-                continue
-            stock_list.append(code)
-    return stock_list
-
-
-def backtest_stock(stock_code, beg, end, init_cash):
     # Create a cerebro entity
     cerebro = bt.Cerebro()
 
@@ -132,10 +123,15 @@ def backtest_stock(stock_code, beg, end, init_cash):
     print(f"Profit for stock {stock_name_} ({stock_code_}): %.2f" % result)
     return result
 
+def init_output(stock_file):
+    base_name = os.path.splitext(os.path.basename(stock_file))[0]
+
+    logger.init(filename=base_name + '.log')
+    exceler.init(filename=base_name + '.xlsx')
+
 
 if __name__ == '__main__':
 
-    backtest_params = config.backtest_param()
     stock_file_list = config.stock_file_list()
     total_profit = 0
 
@@ -145,26 +141,19 @@ if __name__ == '__main__':
 
     for stock_file in stock_file_list:
         print(f"====== stock file: {stock_file} ======")
+        init_output(stock_file)
 
-        base_name = os.path.splitext(os.path.basename(stock_file))[0]
-
-        logger.init(filename=base_name + '.log')
-        exceler.init(filename=base_name + '.xlsx')
-
-        stock_list = get_stock_list(stock_file)
-
+        stock_list = util.get_stock_list(stock_file)
         if not stock_list:
             continue
 
         for stock in stock_list:
             print(f"Backtesting stock: {stock}")
             try:
-                profit = backtest_stock(stock_code=stock, beg=backtest_params.get('beg', '20200101'),
-                                        end=backtest_params.get('end', '20251231'),
-                                        init_cash=backtest_params.get('init_cash', 100000))
+                profit = backtest_stock(stock)
+                total_profit += profit
 
                 logger.write('收益： %.2f' % profit)
-                total_profit += profit
                 exceler.write_finish()
             except Exception as e:
 
