@@ -2,27 +2,29 @@ from __future__ import (absolute_import, division, print_function,
                         unicode_literals)
 
 # Import the backtrader platform
-from data import *
 from util.log.KnownLog import logger
 import math
 from util.log.export_to_excel import exceler
+from util.conf.config import get_strategy_params
+import backtrader as bt
 
 
 # Create a Strategy
 class KnownOneStrategy(bt.Strategy):
+    strategy_params = get_strategy_params('know_one_strategy')
     params = (
-        ('buy_maperiod', 10),
-        ('sell_maperiod', 20),
-        ('bb_period', 9),
-        ('rsi_period', 7),
-        ('macd_period', 10),
-        ('bb_buy', 0.2),
-        ('bb_sell', 0.9),
-        ('rsi_buy', 50),
-        ('rsi_sell', 80),
-        ('macd_buy', 0),
-        ('macd_sell', 0),
-        ('profit_target', 0.08)
+        ('buy_maperiod', strategy_params.get('buy_maperiod', 10)),
+        ('sell_maperiod', strategy_params.get('sell_maperiod', 20)),
+        ('bb_period', strategy_params.get('bb_period', 9)),
+        ('rsi_period', strategy_params.get('rsi_period', 7)),
+        ('macd_period', strategy_params.get('macd_period', 10)),
+        ('bb_buy', strategy_params.get('bb_buy', 0.2)),
+        ('bb_sell', strategy_params.get('bb_sell', 0.9)),
+        ('rsi_buy', strategy_params.get('rsi_buy', 50)),
+        ('rsi_sell', strategy_params.get('rsi_sell', 80)),
+        ('macd_buy', strategy_params.get('macd_buy', 0)),
+        ('macd_sell', strategy_params.get('macd_sell', 0)),
+        ('profit_target', strategy_params.get('profit_target', 0.08))
     )
 
     def log(self, txt, dt=None):
@@ -83,7 +85,7 @@ class KnownOneStrategy(bt.Strategy):
                                         time=self.datas[0].datetime.date(0))
             else:  # Sell
                 self.log('SELL EXECUTED, Price: %.2f, Cost: %.2f, Comm: %.2f' %
-                         (order.executed.price,
+                         (order.executed.pprice,
                           order.executed.value,
                           order.executed.comm))
                 self.sell_count += 1
@@ -106,6 +108,9 @@ class KnownOneStrategy(bt.Strategy):
         if not trade.isclosed:
             return
 
+        '''
+        只有平仓时状态才会是isclosed
+        '''
         self.log('OPERATION PROFIT, GROSS %.2f, NET %.2f' %
                  (trade.pnl, trade.pnlcomm))
         # todo excel

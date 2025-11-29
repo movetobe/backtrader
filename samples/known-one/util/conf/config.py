@@ -38,6 +38,22 @@ def backtest_param():
         raise RuntimeError(f"Invalid parameter format: {str(e)}")
 
 
+def get_strategy_params(strategy_name):
+    """获取指定策略的参数配置
+
+    Args:
+        strategy_name: 策略名称，对应config.yml中的键
+
+    Returns:
+        dict: 策略参数字典
+    """
+    config = load_config()
+    strategy_params = config.get(strategy_name, {})
+    if not strategy_params:
+        raise RuntimeError(f"Missing required strategy config '{strategy_name}'")
+    return strategy_params
+
+
 def stock_file_list():
     config = load_config()
     data_source = config.get("data_source", {})
@@ -52,7 +68,8 @@ def logging():
     config = load_config()
     log_cfg = config.get('logging', {})
     return {
-        'path': os.path.join(PROJECT_ROOT, log_cfg.get('path', 'logs/')),
+        'path': os.path.join(PROJECT_ROOT, log_cfg.get('log_dir', 'outputs/logs/')),
+        'file': log_cfg.get('file', 'backtrade_result.log'),
         'level': log_cfg.get('level', 'INFO'),
         'max_size': log_cfg.get('max_size', 5 * 1024 * 1024),  # 5MB
         'backup_count': log_cfg.get('backup_count', 5)
@@ -75,3 +92,16 @@ def output_dir():
         PROJECT_ROOT,
         config.get('output', {}).get('reports_dir', 'reports/')
     )
+
+
+def excel_conf():
+    config = load_config()
+    return {
+        'file_path': os.path.join(
+            PROJECT_ROOT,
+            config.get('output', {}).get('reports_dir', 'reports/'),
+            config.get('output', {}).get('excel_file', 'backtest_result.xlsx')
+        ),
+        'is_flush': config.get('output', {}).get('is_excel_flush', False),
+        'is_write_excel': config.get('output', {}).get('is_write_excel', False)
+    }

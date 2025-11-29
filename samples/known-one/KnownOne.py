@@ -1,49 +1,44 @@
 from __future__ import (absolute_import, division, print_function,
                         unicode_literals)
 
-import strategy.commission as comm
-from KnownOneStrategy import *
+import common.commission as comm
+from strategy.KnownOneStrategy import *
 from util.log.KnownLog import logger
 from util.log.export_to_excel import exceler
-from custom_sizer import PercentSizer100
+from strategy.custom_sizer import PercentSizer100
+from common.data import HistoricalData
 import time
 import util.conf.config as config
 import os
 import sys
+import util.util as util
+import numpy as np
 
 
-def get_stock_list(file):
-    if not os.path.exists(file):
-        logger.write(f"file not exist:{file}\n")
-        return []
+def backtest_stock(stock_code):
+    backtest_params = config.backtest_param()
+    beg = backtest_params.get('beg', '20200101'),
+    end = backtest_params.get('end', '20251231'),
+    init_cash = backtest_params.get('init_cash', 100000)
 
-    stock_list = []
-    with open(file, 'r', encoding='utf-8') as f:
-        for line in f:
-            # 移除注释和空白
-            code = line.split('#')[0].strip()
-            if not code:
-                continue
-            stock_list.append(code)
-    return stock_list
-
-
-def backtest_stock(stock_code, beg, end, init_cash):
     # Create a cerebro entity
     cerebro = bt.Cerebro()
 
     # Add a strategy
+    is_random_strategy = False
     cerebro.addstrategy(KnownOneStrategy)
+
     # Add a strategy
+    # is_random_strategy = True
     # strats = cerebro.optstrategy(
-    #    TestStrategy,
-    #    bb_period=range(7, 15),
-    #    rsi_period=range(7, 15),
-    #    macd_period=range(7, 15),
-    #    bb_buy=np.arange(0.2, 0.4, 0.1),
-    #    bb_sell=np.arange(0.8, 1.0, 0.1),
-    #    rsi_buy = range(50, 60, 10),
-    #    rsi_sell=range(70, 100, 10)
+    #     KnownOneStrategy,
+    #     bb_period=range(7, 15),
+    #     rsi_period=range(7, 15),
+    #     macd_period=range(7, 15),
+    #     bb_buy=np.arange(0.2, 0.4, 0.1),
+    #     bb_sell=np.arange(0.8, 1.0, 0.1),
+    #     rsi_buy=range(50, 60, 10),
+    #     rsi_sell=range(70, 100, 10)
     # )
 
     # 添加数据
@@ -93,32 +88,36 @@ def backtest_stock(stock_code, beg, end, init_cash):
 
     # Run over everything
     results = cerebro.run()
-    strat = results[0]
-
-    # 打印收益率结果
-    returns_result = strat.analyzers.returns.get_analysis()
-    # 累计回报率可能是 'rtot' 或 'compound'，具体可打印 returns_result 查看
-    drawdown_result = strat.analyzers.drawdown.get_analysis()
-    sharpe_result = strat.analyzers.sharpe.get_analysis()
 
     # Print out the final result
     final_portfolio = cerebro.broker.getvalue()
-    cumulative_return = returns_result.get('rtot', 0) * 100 if returns_result.get('rtot') is not None else 0
-    max_drawdown = drawdown_result['max']['drawdown'] if 'max' in drawdown_result and 'drawdown' in drawdown_result[
-        'max'] else 0
-    sharpe_ratio = sharpe_result['sharperatio'] if 'sharperatio' in sharpe_result else 0
-
     logger.write('Final Name: %s, code: %s, Portfolio Value: %.2f' % (stock_name_, stock_code_, final_portfolio))
-    logger.write('累计收益率： %.2f%%' % cumulative_return)
-    logger.write('最大回撤： %.2f%%' % max_drawdown)
-    logger.write('夏普比率： %.2f' % sharpe_ratio)
-
     exceler.write_state({
-        "final_portfolio": final_portfolio,
-        "cumulative_return": cumulative_return,
-        "max_drawdown": max_drawdown,
-        "sharpe_ratio": sharpe_ratio
+        "final_portfolio": final_portfolio
     })
+
+    if not is_random_strategy:
+        strat = results[0]
+
+        # 打印收益率结果
+        returns_result = strat.analyzers.returns.get_analysis()
+        # 累计回报率可能是 'rtot' 或 'compound'，具体可打印 returns_result 查看
+        drawdown_result = strat.analyzers.drawdown.get_analysis()
+        sharpe_result = strat.analyzers.sharpe.get_analysis()
+
+        cumulative_return = returns_result.get('rtot', 0) * 100 if returns_result.get('rtot') is not None else 0
+        max_drawdown = drawdown_result['max']['drawdown'] if 'max' in drawdown_result and 'drawdown' in drawdown_result[
+            'max'] else 0
+        sharpe_ratio = sharpe_result['sharperatio'] if 'sharperatio' in sharpe_result else 0
+
+        logger.write('累计收益率： %.2f%%' % cumulative_return)
+        logger.write('最大回撤： %.2f%%' % max_drawdown)
+        logger.write('夏普比率： %.2f' % sharpe_ratio)
+        exceler.write_state({
+            "cumulative_return": cumulative_return,
+            "max_drawdown": max_drawdown,
+            "sharpe_ratio": sharpe_ratio
+        })
 
     logger.write('======================')
 
@@ -133,11 +132,16 @@ def backtest_stock(stock_code, beg, end, init_cash):
     return result
 
 
+def init_output():
+    logger.init()
+    exceler.init()
+
+
 if __name__ == '__main__':
 
-    backtest_params = config.backtest_param()
     stock_file_list = config.stock_file_list()
     total_profit = 0
+    init_output()
 
     if len(stock_file_list) == 0:
         print(f"Error: stock_file_list is empty, please check config.yml")
@@ -145,26 +149,18 @@ if __name__ == '__main__':
 
     for stock_file in stock_file_list:
         print(f"====== stock file: {stock_file} ======")
-
-        base_name = os.path.splitext(os.path.basename(stock_file))[0]
-
-        logger.init(filename=base_name + '.log')
-        exceler.init(filename=base_name + '.xlsx')
-
-        stock_list = get_stock_list(stock_file)
-
+        stock_list = util.get_stock_list(stock_file)
         if not stock_list:
+            print(f"Error: stock_list is empty, please check {stock_file}")
             continue
 
         for stock in stock_list:
             print(f"Backtesting stock: {stock}")
             try:
-                profit = backtest_stock(stock_code=stock, beg=backtest_params.get('beg', '20200101'),
-                                        end=backtest_params.get('end', '20251231'),
-                                        init_cash=backtest_params.get('init_cash', 100000))
+                profit = backtest_stock(stock)
+                total_profit += profit
 
                 logger.write('收益： %.2f' % profit)
-                total_profit += profit
                 exceler.write_finish()
             except Exception as e:
 

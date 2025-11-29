@@ -1,22 +1,39 @@
 backtest_params:
-  beg: '20230101'  # 回测开始日期(YYYYMMDD)
+  beg: '20240101'  # 回测开始日期(YYYYMMDD)
   end: '20251231'  # 回测结束日期(YYYYMMDD)
   init_cash: 10000.00  # 初始资金(保留两位小数)
   klt: 102  # K线类型: 101(日), 102(周), 103(月), [1,5,15,30,60](分钟)
   fqt: 1    # 复权类型: 0(不复权), 1(前复权), 2(后复权)
 
+know_one_strategy:
+  buy_maperiod: 10  # 买入移动平均线周期。当价格穿过10日均线时买入
+  sell_maperiod: 20 # 卖出移动平均线周期，当价格穿过20日均线时卖出
+  bb_period: 9      # 布林带反映市场的波动，波动越大，布林带越宽
+  rsi_period: 7     # 相对强弱指数，评价价格上涨和下降幅度，RSI超过70，认为是超买区，RSI低于30，认为是超卖区
+  macd_period: 10   # 平滑异同移动平均线，短期趋势和长期趋势线之间的差距，>0 代表短期动能大于长期动能，处于多头市场。
+  bb_buy: 0.2       # 当前价格在布林带通道所处的相对位置（离下轨的位置），当0<bb<0.2时，说明超卖，考虑买入。
+  bb_sell: 0.9
+  rsi_buy: 50       # RSI买入阈值
+  rsi_sell: 80      # RSI卖出阈值
+  macd_buy: 0
+  macd_sell: 0
+  profit_target: 0.08  # 目标收益率
+
 data_source:
-  data_dir: "data/" # 股票列表文件目录
+  data_dir: "inputs/" # 股票列表文件目录
   stock_file_list:
     - 'zml.sh'
 
 output:
-  reports_dir: "reports/"  # 报告输出目录
+  reports_dir: "outputs/"  # 报告输出目录
+  is_write_excel: false # 是否写excel
+  excel_file: 'backtrade_result.xlsx'  # 表格路径
+  is_excel_flush: false # 是否实时写入excel
   is_draw: false # 是否画图：true/false
 
 logging:
-  log_dir: "logs/" # 日志文件目录
-  file: 'logs/backtest.log'  # 日志文件路径
+  log_dir: "outputs/logs/" # 日志文件目录
+  file: 'backtrade_result.log'  # 日志文件路径
   level: 'INFO'  # 日志级别: DEBUG/INFO/WARNING/ERROR
   max_size: '10'  # 单个日志文件最大大小MB
   backup_count: 5
