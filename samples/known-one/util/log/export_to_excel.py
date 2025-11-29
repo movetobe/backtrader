@@ -1,13 +1,10 @@
 import os
-# import time
 import pandas as pd
-# import atexit
-from util.log.KnownLog import logger
-
-from openpyxl import Workbook
 from openpyxl import load_workbook
 from openpyxl.styles import Alignment
+from openpyxl.utils.dataframe import dataframe_to_rows
 import util.conf.config as config
+import util.util as util
 
 
 class ToExcel:
@@ -19,28 +16,23 @@ class ToExcel:
             cls._instance._initialized = False
         return cls._instance
 
-    def __init__(self, filename=None):
-        if self._initialized or filename is None:
+    def __init__(self):
+        if self._initialized:
             return
-        filedir = config
-        self.init(filename, filedir)
-        self._initialized = True
-
-    def init(self, filename="backtrade_result.xlsx"):
-        excel_path = config.output_dir()
-        os.makedirs(excel_path, exist_ok=True)
-
-        self.file_path = os.path.abspath(os.path.join(excel_path, filename))
-
-        if os.path.exists(self.file_path):
-            try:
-                os.remove(self.file_path)
-                logger.write(f"Cleared existing file: {self.file_path}")
-            except Exception as e:
-                logger.write(f"Error clearing file {self.file_path}: {str(e)}")
-
+        self.excel_dir = config.output_dir()
+        os.makedirs(self.excel_dir, exist_ok=True)
+        self.file_path = config.excel_conf()['file_path']
+        self.is_flush = config.excel_conf()['is_flush']
+        self.is_write_excel = config.excel_conf()['is_write_excel']
         self.data = []
         self.reset()
+        self._initialized = True
+
+    def init(self):
+        if self.is_write_excel:
+            return
+        if os.path.exists(self.file_path):
+            util.rename_file(self.file_path)
 
     def reset(self):
         self.stock_name = None
@@ -127,8 +119,15 @@ class ToExcel:
 
     def export_to_excel(self):
         '''每个stock_list_file处理结束后，写入xlsx文件'''
-        if not self.data or not self.file_path:
-            logger.write(f"Error: export_to_excel: data is empty or file_path is None")
+        if self.is_write_excel:
+            return
+
+        if not self.file_path:
+            print(f"Error: export_to_excel: file_path is None")
+            return
+
+        if not self.data:
+            print(f"Error: export_to_excel: data is empty")
             return
 
         df = pd.DataFrame(self.data)

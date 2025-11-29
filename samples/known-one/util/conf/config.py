@@ -68,7 +68,8 @@ def logging():
     config = load_config()
     log_cfg = config.get('logging', {})
     return {
-        'path': os.path.join(PROJECT_ROOT, log_cfg.get('log_dir', 'logs/')),
+        'path': os.path.join(PROJECT_ROOT, log_cfg.get('log_dir', 'outputs/logs/')),
+        'file': log_cfg.get('file', 'backtrade_result.log'),
         'level': log_cfg.get('level', 'INFO'),
         'max_size': log_cfg.get('max_size', 5 * 1024 * 1024),  # 5MB
         'backup_count': log_cfg.get('backup_count', 5)
@@ -91,3 +92,16 @@ def output_dir():
         PROJECT_ROOT,
         config.get('output', {}).get('reports_dir', 'reports/')
     )
+
+
+def excel_conf():
+    config = load_config()
+    return {
+        'file_path': os.path.join(
+            PROJECT_ROOT,
+            config.get('output', {}).get('reports_dir', 'reports/'),
+            config.get('output', {}).get('excel_file', 'backtest_result.xlsx')
+        ),
+        'is_flush': config.get('output', {}).get('is_excel_flush', False),
+        'is_write_excel': config.get('output', {}).get('is_write_excel', False)
+    }

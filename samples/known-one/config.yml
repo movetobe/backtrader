@@ -26,11 +26,14 @@ data_source:
 
 output:
   reports_dir: "outputs/"  # 报告输出目录
+  is_write_excel: false # 是否写excel
+  excel_file: 'backtrade_result.xlsx'  # 表格路径
+  is_excel_flush: false # 是否实时写入excel
   is_draw: false # 是否画图：true/false
 
 logging:
   log_dir: "outputs/logs/" # 日志文件目录
-  file: 'logs/backtest.log'  # 日志文件路径
+  file: 'backtrade_result.log'  # 日志文件路径
   level: 'INFO'  # 日志级别: DEBUG/INFO/WARNING/ERROR
   max_size: '10'  # 单个日志文件最大大小MB
   backup_count: 5

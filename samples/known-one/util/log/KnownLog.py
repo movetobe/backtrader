@@ -1,7 +1,7 @@
 import os
 import inspect
 import util.conf.config as config
-
+import util.util as util
 
 class KnownLog:
     _instance = None
@@ -9,18 +9,20 @@ class KnownLog:
     def __new__(cls, *args, **kwargs):
         if not cls._instance:
             cls._instance = super().__new__(cls)
+            cls._instance._initialized = False
         return cls._instance
 
-    def __init__(self, filename=None, filedir="../../log/"):
-        if filename:
-            self.init(filename, filedir)
+    def __init__(self):
+        if self._initialized:
+            return
+        self.log_path = config.logging()['path']
+        os.makedirs(self.log_path, exist_ok=True)
+        self.file_path = os.path.join(self.log_path, config.logging()['file'])
+        self._initialized = True
 
-    def init(self, filename="backtrade_result.txt"):
-        log_path = config.logging()['path']
-        os.makedirs(log_path, exist_ok=True)
-        self.file_path = os.path.join(log_path, filename)
+    def init(self):
         if os.path.exists(self.file_path):
-            self.clear()
+            util.rename_file(self.file_path)
 
     def write(self, txt, dt=None):
         # dt可以是datetime对象或字符串
